@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Panel de Administración</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background: #f8f9fa;
+    }
+    h1 { color: #333; }
+    button {
+      margin: 10px;
+      padding: 10px 20px;
+      cursor: pointer;
+      border: none;
+      background: #007bff;
+      color: white;
+      border-radius: 6px;
+      font-size: 15px;
+    }
+    button:hover { background: #0056b3; }
+  </style>
+  <script src="js/admin.js"></script>
+</head>
+<body>
+  <h1>🛠️ Panel de Administración</h1>
+  <p>Bienvenido, administrador.</p>
+
+  <button onclick="window.location.href='admin-users.html'">👤 Usuarios</button>
+  <button onclick="window.location.href='admin-categories.html'">📂 Categorías</button>
+  <button onclick="window.location.href='admin-games.html'">🎮 Juegos</button>
+  <button onclick="logout()">🚪 Cerrar sesión</button>
+
+  <script>
+    function logout() {
+      localStorage.removeItem("token");
+      window.location.href = "../front-usuario/login.html";
+    }
+  </script>
+</body>
+</html>

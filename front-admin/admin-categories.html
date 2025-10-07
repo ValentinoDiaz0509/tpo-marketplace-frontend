@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Administrar Categorías</title>
+  <style>
+    body { font-family: Arial; margin: 20px; }
+    input { margin-right: 10px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 8px; }
+    th { background: #f2f2f2; }
+  </style>
+  <script src="js/admin.js"></script>
+</head>
+<body>
+  <h1>📂 Administración de Categorías</h1>
+
+  <input type="text" id="newCategory" placeholder="Nueva categoría">
+  <button onclick="createCategory()">Agregar</button>
+  <p id="msg"></p>
+
+  <table id="catTable">
+    <thead>
+      <tr><th>ID</th><th>Nombre</th><th>Acción</th></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    const API_URL = "http://localhost:4002";
+    const token = localStorage.getItem("token");
+
+    async function loadCategories() {
+      const res = await fetch(`${API_URL}/categories`);
+      const cats = await res.json();
+      const tbody = document.querySelector("#catTable tbody");
+      tbody.innerHTML = "";
+      cats.content?.forEach(c => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${c.id}</td>
+          <td><input id="catName-${c.id}" value="${c.name}"></td>
+          <td>
+            <button onclick="updateCategory(${c.id})">Guardar</button>
+            <button onclick="deleteCategory(${c.id})">Eliminar</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function createCategory() {
+      const name = document.getElementById("newCategory").value;
+      const res = await fetch(`${API_URL}/categories`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name })
+      });
+      document.getElementById("msg").textContent = res.ok ? "Categoría creada ✅" : "Error";
+      loadCategories();
+    }
+
+    async function updateCategory(id) {
+      const name = document.getElementById(`catName-${id}`).value;
+      const res = await fetch(`${API_URL}/categories/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, name })
+      });
+      document.getElementById("msg").textContent = res.ok ? "Actualizada ✅" : "Error";
+    }
+
+    async function deleteCategory(id) {
+      const res = await fetch(`${API_URL}/categories/${id}`, { method: "DELETE" });
+      document.getElementById("msg").textContent = res.ok ? "Eliminada ✅" : "Error";
+      loadCategories();
+    }
+
+    loadCategories();
+  </script>
+</body>
+</html>

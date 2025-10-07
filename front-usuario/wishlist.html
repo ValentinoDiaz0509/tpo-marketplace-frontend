@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Mi Wishlist</title>
+  <script>
+    const API_URL = "http://localhost:4002";
+    document.addEventListener("DOMContentLoaded", async () => {
+      const token = localStorage.getItem("token");
+      if (!token) return (window.location.href = "login.html");
+      const wishlistId = prompt("Ingresá tu ID de wishlist:");
+      const res = await fetch(`${API_URL}/wishlist/${wishlistId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      const div = document.getElementById("games");
+      if (data.gameList.length === 0) return (div.textContent = "Tu wishlist está vacía.");
+      data.gameList.forEach(g => {
+        const p = document.createElement("p");
+        p.textContent = `${g.title} — $${g.price}`;
+        div.appendChild(p);
+      });
+    });
+  </script>
+</head>
+<body>
+  <h2>Mi Wishlist</h2>
+  <div id="games">Cargando...</div>
+  <p><a href="profile.html">Volver a mi perfil</a></p>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Confirmar compra</title>
+  <script src="cart.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const form = document.getElementById("orderForm");
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      const API_URL = "http://localhost:4002";
+
+      if (cart.length === 0) {
+        document.body.innerHTML = "<p>Tu carrito está vacío.</p>";
+        return;
+      }
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const token = localStorage.getItem("token");
+        if (!token) {
+          alert("Debes iniciar sesión para hacer un pedido.");
+          window.location.href = "login.html";
+          return;
+        }
+
+        const address = document.getElementById("address").value;
+
+        const itemList = cart.map(item => ({
+          gameId: item.gameId,
+          quantity: item.quantity
+        }));
+
+        const res = await fetch(`${API_URL}/order`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify({ address, itemList })
+        });
+
+        if (res.ok) {
+          alert("Pedido confirmado con éxito!");
+          localStorage.removeItem("cart");
+          window.location.href = "orders.html";
+        } else {
+          alert("Error al procesar el pedido.");
+        }
+      });
+    });
+  </script>
+</head>
+<body>
+  <h2>Confirmar compra</h2>
+
+  <form id="orderForm">
+    <input type="text" id="address" placeholder="Dirección de entrega" required><br>
+    <button type="submit">Confirmar compra ✅</button>
+  </form>
+
+  <p><a href="cart.html">Volver al carrito</a></p>
+</body>
+</html>

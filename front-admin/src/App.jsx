@@ -1,24 +1,47 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "./context/AuthContext";
-import AdminNavbar from "./components/AdminNavbar";
-import Login from "./pages/Login";
-import Dashboard from "./pages/Dashboard";
-import Users from "./pages/Users";
-import Games from "./pages/Games";
-import Categories from "./pages/Categories";
+import { AuthProvider, AuthContext } from "./context/AuthContext"; // Importa AuthContext
+import { useContext } from "react"; // Importa useContext
+import { ProtectedRoute } from "./router/ProtectedRoute"; // Importa el componente
+import AdminGames from './pages/admin/AdminGames';
+import GameForm from './components/GameForm'; 
+
+
+
+function AppRoutes() {
+  const { user } = useContext(AuthContext);
+
+  return (
+    <Routes>
+      <Route path="/login" element={<Login />} />
+
+      <Route
+        element={
+          <ProtectedRoute
+            isAllowed={!!user && user.role === 'ADMIN'}
+            redirectTo="/login"
+          />
+        }
+      >
+        <Route path="/" element={<Dashboard />} />
+        
+        {}
+        <Route path="/games" element={<AdminGames />} /> 
+        <Route path="/games/new" element={<GameForm />} /> 
+        <Route path="/games/edit/:id" element={<GameForm />} /> 
+        
+        <Route path="/users" element={<Users />} />
+        <Route path="/categories" element={<Categories />} />
+      </Route>
+    </Routes>
+  );
+}
 
 export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <AdminNavbar />
-        <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/users" element={<Users />} />
-          <Route path="/games" element={<Games />} />
-          <Route path="/categories" element={<Categories />} />
-        </Routes>
+        <Navbar />
+        <AppRoutes />
       </BrowserRouter>
     </AuthProvider>
   );

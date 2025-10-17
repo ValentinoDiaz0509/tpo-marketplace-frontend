@@ -53,6 +53,10 @@ export const deleteGameAPI = (gameId) => {
   });
 };
 
+export const fetchDashboardStatsAPI = () => {
+  return fetchData("/api/v1/admin/stats"); // Asumimos este nuevo endpoint
+};
+
 export const fetchWishlistAPI = () => {
   return fetchData("/api/v1/wishlist");
 };

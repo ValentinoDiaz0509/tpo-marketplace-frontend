@@ -1,5 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import { routes } from "./routes";
+// NOTE: Layout import unchanged; child routes handling adjusted below to use childRequiredRole
 import Layout from "../components/layout/Layout";
 import PrivateRoute from "./PrivateRoute";
 
@@ -35,8 +36,10 @@ const AppRouter = () => {
                         key={childId}
                         path={childPath}
                         element={
+                          // MODIFIED: use childRequiredRole for child routes (was passing parent requiredRole)
+                          // Reason: child routes may have different access requirements than their parent.
                           childRequiredRole ? (
-                            <PrivateRoute requiredRole={requiredRole}>
+                            <PrivateRoute requiredRole={childRequiredRole}>
                               <ChildElement />
                             </PrivateRoute>
                           ) : (

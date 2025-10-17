@@ -83,6 +83,12 @@ export const routes = [
         Element: AdminGameList,
       },
       {
+        id: "orders",
+        path: "/orders",
+        Element: Orders,
+        requiredRole: "USER",
+      },
+      {
         id: "admin-create-game",
         path: "games/create",
         Element: AdminCreateGame,

@@ -24,15 +24,15 @@ export default function Register() {
   
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(""); // Limpiar errores previos
+    setError(""); 
 
   
     if (form.password !== form.confirmPassword) {
       setError("Las contraseñas no coinciden.");
-      return; // Detenemos la ejecución si no coinciden
+      return; 
     }
 
-    setLoading(true); // Iniciar la carga
+    setLoading(true); 
 
     try {
       
@@ -50,7 +50,7 @@ export default function Register() {
     } catch (err) {
       setError("Error al registrar. El correo o usuario ya puede estar en uso.");
     } finally {
-      setLoading(false); // Detener la carga
+      setLoading(false); 
     }
   };
 

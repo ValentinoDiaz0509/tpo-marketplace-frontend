@@ -25,6 +25,17 @@ export const fetchWishlistAPI = () => {
   return fetchData("/api/v1/wishlist");
 };
 
+export const fetchCategoriesAPI = () => {
+  return fetchData("/api/v1/categories");
+};
+
+export const createGameAPI = (gameData) => {
+  return fetchData("/api/v1/admin/games", { // Endpoint de ejemplo para crear
+    method: 'POST',
+    body: JSON.stringify(gameData),
+  });
+};
+
 
 export const addToWishlistAPI = (gameId) => {
   return fetchData("/api/v1/wishlist", {

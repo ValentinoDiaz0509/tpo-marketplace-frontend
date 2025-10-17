@@ -15,6 +15,11 @@ export async function fetchData(endpoint, options = {}) {
 }
 
 
+export const deleteGameAPI = (gameId) => {
+  return fetchData(`/api/v1/admin/games/${gameId}`, { // Endpoint de ejemplo para borrar
+    method: 'DELETE',
+  });
+};
 
 export const fetchWishlistAPI = () => {
   return fetchData("/api/v1/wishlist");

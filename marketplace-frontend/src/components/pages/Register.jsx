@@ -58,7 +58,7 @@ export default function Register() {
     <div className="relative flex min-h-screen w-full flex-col items-center justify-center bg-[#1d2310] font-display py-10">
       <form onSubmit={handleSubmit} className="flex w-full max-w-md flex-col space-y-6 rounded-xl bg-[#222222] bg-opacity-80 p-8">
         <div className="flex justify-center">
-            {/* Aquí podrías poner tu SVG o un <img> si tienes el logo */}
+            {/* un logo? */}
             <h1 className="text-white text-2xl font-bold">Uade Games</h1>
         </div>
         <div className="flex flex-wrap justify-center gap-3">

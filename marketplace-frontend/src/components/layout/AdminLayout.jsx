@@ -1,13 +1,15 @@
-import { Outlet } from "react-router-dom";
-import AdminNavbar from "./AdminNavbar";
+import { Outlet } from 'react-router-dom';
+import AdminNavbar from './AdminNavbar';
 
-const AdminLayout = () => {
+export default function AdminLayout() {
   return (
-    <div>
+    <div className="flex min-h-screen bg-background-dark font-display">
       <AdminNavbar />
-      <Outlet />
+      <main className="flex-1 p-8">
+        <div className="max-w-7xl mx-auto">
+          <Outlet />
+        </div>
+      </main>
     </div>
   );
-};
-
-export default AdminLayout;
+}

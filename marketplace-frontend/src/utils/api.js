@@ -14,10 +14,18 @@ export async function fetchData(endpoint, options = {}) {
   return res.json();
 }
 
-/**
- * Crea una nueva categoría.
- * @param {object} categoryData - Los datos de la categoría (ej: { name: "Aventura" }).
- */
+export const updateUserRoleAPI = (userId, role) => {
+  return fetchData(`/api/v1/admin/usuarios/${userId}/role`, {
+    method: 'PUT',
+    body: JSON.stringify({ role }),
+  });
+};
+
+export const deleteUserAPI = (userId) => {
+  return fetchData(`/api/v1/admin/usuarios/${userId}`, {
+    method: 'DELETE',
+  });
+};
 export const createCategoryAPI = (categoryData) => {
   return fetchData("/api/v1/admin/categories", {
     method: 'POST',

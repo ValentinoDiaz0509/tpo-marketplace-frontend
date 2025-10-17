@@ -1,4 +1,5 @@
 import GameDetail from "../components/pages/GameDetail";
+import Wishlist from '../components/pages/Wishlist';
 import Home from "../components/pages/Home";
 import Login from "../components/pages/Login";
 import Register from "../components/pages/Register";
@@ -54,6 +55,12 @@ export const routes = [
         id: "admin-dashboard",
         path: "dashboard",
         Element: AdminDashboard,
+      },
+      {
+        id: "wishlist",
+        path: "/wishlist",
+        Element: Wishlist,
+        requiredRole: "USER", // Requiere que el usuario esté logueado
       },
       {
         id: "admin-categories",

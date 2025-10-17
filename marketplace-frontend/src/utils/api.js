@@ -14,6 +14,30 @@ export async function fetchData(endpoint, options = {}) {
   return res.json();
 }
 
+/**
+ * Crea una nueva categoría.
+ * @param {object} categoryData - Los datos de la categoría (ej: { name: "Aventura" }).
+ */
+export const createCategoryAPI = (categoryData) => {
+  return fetchData("/api/v1/admin/categories", {
+    method: 'POST',
+    body: JSON.stringify(categoryData),
+  });
+};
+
+export const updateCategoryAPI = (categoryId, categoryData) => {
+  return fetchData(`/api/v1/admin/categories/${categoryId}`, {
+    method: 'PUT',
+    body: JSON.stringify(categoryData),
+  });
+};
+
+export const deleteCategoryAPI = (categoryId) => {
+  return fetchData(`/api/v1/admin/categories/${categoryId}`, {
+    method: 'DELETE',
+  });
+};
+
 
 export const deleteGameAPI = (gameId) => {
   return fetchData(`/api/v1/admin/games/${gameId}`, { // Endpoint de ejemplo para borrar

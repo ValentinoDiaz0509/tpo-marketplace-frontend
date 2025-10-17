@@ -21,6 +21,10 @@ export const updateUserRoleAPI = (userId, role) => {
   });
 };
 
+export const fetchOrdersAPI = () => {
+  return fetchData("/api/v1/orders/me"); // Asumiendo este endpoint
+};
+
 export const deleteUserAPI = (userId) => {
   return fetchData(`/api/v1/admin/usuarios/${userId}`, {
     method: 'DELETE',

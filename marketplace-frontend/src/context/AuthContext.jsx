@@ -1,58 +1,55 @@
 import { createContext, useState, useEffect } from "react";
 import { getRole } from "../utils/decodeJwt";
-import { fetchData } from "../utils/api";
+import { fetchData, fetchWishlistAPI, addToWishlistAPI } from "../utils/api";
 
 export const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  /* const [user, setUser] = useState(null); */
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
   const [role, setRole] = useState(null);
+  
+  const [wishlist, setWishlist] = useState([]);
 
-  // MODIFIED: On load, if token exists fetch user profile from backend to obtain role
-  // Reason: backend does not include role claim in JWT; role is obtained via user profile endpoint
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
 
-    async function loadUser() {
+    async function loadUserAndWishlist() {
       if (storedToken) {
         setToken(storedToken);
         try {
           const user = await fetchData('/api/v1/users/me');
-          // expecting user object with a role field
           setRole(user?.role ?? getRole(storedToken));
-          /* setUser(user); */
+          // --- AÑADIDO: Carga la wishlist si el usuario se carga correctamente ---
+          const wishlistData = await fetchWishlistAPI();
+          setWishlist(wishlistData);
         } catch (err) {
-          console.error('Error fetching current user:', err);
-          // token may be invalid/expired -> cleanup
+          // Si hay error, limpiamos todo
           localStorage.removeItem('token');
           setToken(null);
           setRole(null);
+          setWishlist([]); // Limpia la wishlist también
         }
       }
       setLoading(false);
     }
-
-    loadUser();
+    loadUserAndWishlist();
   }, []);
 
-  // MODIFIED: after storing token, request user profile to obtain role; fallback to decoding token
-  // Reason: backend validates roles from DB and does not provide role claim in JWT
-  const login = (newToken, userData) => {
-    // Persist token first so fetchData will include it in headers
+  const login = (newToken) => {
     localStorage.setItem("token", newToken);
     setToken(newToken);
-    /* setUser(userData); */
 
-    // Fetch user profile to obtain role from backend
     fetchData('/api/v1/users/me')
       .then(user => {
         setRole(user?.role ?? getRole(newToken));
+        return fetchWishlistAPI(); // Llama para obtener la wishlist
+      })
+      .then(wishlistData => {
+        setWishlist(wishlistData);
       })
       .catch(err => {
-        console.error('Error fetching user after login:', err);
-        // If backend doesn't respond, fallback to decoding token
+        console.error('Error al obtener datos post-login:', err);
         setRole(getRole(newToken));
       });
   };
@@ -60,18 +57,27 @@ export function AuthProvider({ children }) {
   const logout = () => {
     setToken(null);
     setRole(null);
-    /* setUser(null); */
+    setWishlist([]); // Limpia la wishlist al cerrar sesión
     localStorage.removeItem("token");
-    /* localStorage.removeItem("user"); */
+  };
+
+  const addGameToWishlist = async (gameId) => {
+    try {
+      const updatedWishlist = await addToWishlistAPI(gameId);
+      setWishlist(updatedWishlist); 
+    } catch (error) {
+      console.error("No se pudo agregar el juego a la wishlist desde el contexto.");
+    }
   };
 
   const value = {
     token,
     role,
-    /* user, */
     loading,
+    wishlist, 
     login,
     logout,
+    addGameToWishlist, 
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

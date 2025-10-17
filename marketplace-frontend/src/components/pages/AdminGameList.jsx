@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { fetchData } from "../../utils/api";
+import { fetchData, deleteGameAPI } from "../../utils/api";
 
 // Pequeño componente para mostrar el estado con colores
 const StatusBadge = ({ status }) => {
@@ -32,10 +32,24 @@ export default function AdminGameList() {
       .finally(() => setLoading(false));
   }, []);
 
+    const handleDelete = async (gameIdToDelete) => {
+    if (window.confirm('¿Estás seguro de que querés eliminar este juego? Esta acción no se puede deshacer.')) {
+      try {
+        await deleteGameAPI(gameIdToDelete);
+        // Si la API tuvo éxito, actualizamos el estado para quitar el juego de la lista
+        setGames(prevGames => prevGames.filter(game => game.id !== gameIdToDelete));
+        alert('Juego eliminado con éxito.');
+      } catch (err) {
+        console.error('Error al eliminar el juego:', err);
+        alert(`Error al eliminar el juego: ${err.message}`);
+      }
+    }
+  };
+
   if (loading) return <p className="text-white">Cargando juegos...</p>;
   if (error) return <p className="text-red-500">{error}</p>;
 
-  return (
+ return (
     <div>
       {/* Encabezado y botón de "Añadir" */}
       <div className="flex flex-wrap justify-between items-center gap-4 mb-6">
@@ -46,7 +60,17 @@ export default function AdminGameList() {
         </Link>
       </div>
 
-      <div className="mb-6">{/* ... JSX de la barra de búsqueda ... */}</div>
+      {/* Barra de Búsqueda (funcionalidad se puede agregar después) */}
+      <div className="mb-6">
+        <label className="flex flex-col min-w-40 h-12 w-full">
+          <div className="flex w-full flex-1 items-stretch rounded-lg h-full">
+            <div className="text-gray-400 flex bg-component-dark items-center justify-center pl-4 rounded-l-lg border-r-0">
+              <span className="material-symbols-outlined">search</span>
+            </div>
+            <input className="form-input flex w-full min-w-0 flex-1 rounded-r-lg text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border-none bg-component-dark h-full placeholder:text-gray-400 px-4 text-base" placeholder="Buscar juegos por título..." />
+          </div>
+        </label>
+      </div>
 
       {/* Tabla de Juegos */}
       <div className="overflow-x-auto rounded-lg border border-gray-700 bg-component-dark">
@@ -74,10 +98,10 @@ export default function AdminGameList() {
                 <td className="px-4 py-2">
                   <div className="flex items-center gap-4">
                     <Link to={`/admin/games/edit/${game.id}`} className="text-gray-400 hover:text-primary transition-colors">
-                        <span className="material-symbols-outlined">edit</span>
+                      <span className="material-symbols-outlined">edit</span>
                     </Link>
-                    <button className="text-gray-400 hover:text-red-500 transition-colors">
-                        <span className="material-symbols-outlined">delete</span>
+                    <button onClick={() => handleDelete(game.id)} className="text-gray-400 hover:text-red-500 transition-colors">
+                      <span className="material-symbols-outlined">delete</span>
                     </button>
                   </div>
                 </td>
@@ -87,7 +111,10 @@ export default function AdminGameList() {
         </table>
       </div>
       
-      <div className="flex items-center justify-center mt-6">{/* ... JSX de la paginación ... */}</div>
+      {/* Paginación (funcionalidad se puede agregar después) */}
+      <div className="flex items-center justify-center mt-6">
+        {/* ... JSX de la paginación ... */}
+      </div>
     </div>
   );
 }

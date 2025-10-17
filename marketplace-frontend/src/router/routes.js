@@ -1,3 +1,4 @@
+import GameDetail from "../components/pages/GameDetail";
 import Home from "../components/pages/Home";
 import Login from "../components/pages/Login";
 import Register from "../components/pages/Register";
@@ -37,11 +38,12 @@ export const routes = [
     Element: Profile,
     requiredRole: "USER",
   },
-  /* {
-    id: "detail",
-    path: "/detail/:id",
-    Element: Detail,
-  }, */
+  {
+    id: "game-detail",       
+    path: "/detail/:id",      
+    Element: GameDetail,      
+    requiredRole: "USER",      
+  },
   {
     id: "admin",
     path: "/admin",

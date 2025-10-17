@@ -89,6 +89,12 @@ export const routes = [
         requiredRole: "USER",
       },
       {
+        id: "forgot-password",
+        path: "/forgot-password",
+        Element: ForgotPassword,
+        requiredRole: null, // Es una página pública
+      },
+      {
         id: "admin-create-game",
         path: "games/create",
         Element: AdminCreateGame,

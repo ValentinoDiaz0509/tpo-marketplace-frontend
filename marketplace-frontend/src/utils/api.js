@@ -37,6 +37,13 @@ export const createCategoryAPI = (categoryData) => {
   });
 };
 
+export const forgotPasswordAPI = (email) => {
+  return fetchData("/api/v1/auth/forgot-password", {
+    method: 'POST',
+    body: JSON.stringify({ email }),
+  });
+};
+
 export const updateCategoryAPI = (categoryId, categoryData) => {
   return fetchData(`/api/v1/admin/categories/${categoryId}`, {
     method: 'PUT',

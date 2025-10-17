@@ -60,6 +60,10 @@ export const createGameAPI = (gameData) => {
   });
 };
 
+export const fetchCategoryByIdAPI = (categoryId) => {
+  return fetchData(`/api/v1/admin/categories/${categoryId}`); // Endpoint de ejemplo
+};
+
 export const fetchGameForEditAPI = (gameId) => {
   return fetchData(`/games/admin/${gameId}`); // Asumiendo este endpoint
 };

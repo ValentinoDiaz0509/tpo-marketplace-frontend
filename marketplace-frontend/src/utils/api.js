@@ -36,6 +36,26 @@ export const createGameAPI = (gameData) => {
   });
 };
 
+export const fetchGameForEditAPI = (gameId) => {
+  return fetchData(`/games/admin/${gameId}`); // Asumiendo este endpoint
+};
+
+export const updateGameAPI = (gameId, data) => {
+  const isFormData = data instanceof FormData;
+  const token = localStorage.getItem("token");
+  
+  return fetch(`${API_URL}/games/admin/update/${gameId}`, { // Endpoint de ejemplo
+    method: 'PUT',
+    headers: {
+      // Si es FormData, el navegador pone el Content-Type correcto automáticamente.
+      // Si es JSON, lo especificamos nosotros.
+      ...(!isFormData && { 'Content-Type': 'application/json' }),
+      ...(token && { "Authorization": `Bearer ${token}` })
+    },
+    body: isFormData ? data : JSON.stringify(data),
+  });
+};
+
 
 export const addToWishlistAPI = (gameId) => {
   return fetchData("/api/v1/wishlist", {

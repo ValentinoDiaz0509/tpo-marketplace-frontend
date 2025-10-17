@@ -24,7 +24,7 @@ export default function AdminGameList() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    fetchData("/games/admin") // Tu endpoint para traer todos los juegos
+    fetchData("/games/admin") 
       .then((data) => {
         setGames(data);
       })
@@ -48,6 +48,7 @@ export default function AdminGameList() {
 
       <div className="mb-6">{/* ... JSX de la barra de búsqueda ... */}</div>
 
+      {/* Tabla de Juegos */}
       <div className="overflow-x-auto rounded-lg border border-gray-700 bg-component-dark">
         <table className="w-full text-left">
           <thead className="bg-gray-800/50">

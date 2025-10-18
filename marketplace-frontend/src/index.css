@@ -1,14 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #0d1117;
-
+  /* Estas son buenas prácticas que vienen por defecto y las mantenemos */
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  /* Aquí establecemos los estilos globales para todo el sitio */
+  font-family: "Krona One", sans-serif;
+  background-color: #0d1117;
+  color: rgba(255, 255, 255, 0.87);
+  margin: 0; /* Aseguramos que no haya márgenes por defecto */
+  padding: 0; /* Aseguramos que no haya padding por defecto */
 }

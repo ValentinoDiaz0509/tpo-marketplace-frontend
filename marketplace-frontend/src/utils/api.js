@@ -14,103 +14,105 @@ export async function fetchData(endpoint, options = {}) {
   return res.json();
 }
 
-export const updateUserRoleAPI = (userId, role) => {
-  return fetchData(`/api/v1/admin/usuarios/${userId}/role`, {
-    method: 'PUT',
-    body: JSON.stringify({ role }),
+// --- Authentication API (AuthController) ---
+export const loginAPI = (credentials) => {
+  return fetchData("/api/v1/auth/authenticate", {
+    method: 'POST',
+    body: JSON.stringify(credentials),
   });
 };
 
-export const fetchOrdersAPI = () => {
-  return fetchData("/api/v1/orders/me"); // Asumiendo este endpoint
-};
-
-export const deleteUserAPI = (userId) => {
-  return fetchData(`/api/v1/admin/usuarios/${userId}`, {
-    method: 'DELETE',
+export const registerAPI = (registerData) => {
+  return fetchData("/api/v1/auth/register", {
+    method: 'POST',
+    body: JSON.stringify(registerData),
   });
 };
+
+// --- User API (UserController) ---
+export const fetchUserProfileAPI = () => {
+    return fetchData("/api/v1/users/me");
+};
+
+export const updateUserAPI = (userData) => {
+    return fetchData("/api/v1/users/me", {
+        method: 'PUT',
+        body: JSON.stringify(userData),
+    });
+};
+
+// --- Admin API (AdminController) ---
+export const fetchAllUsersAPI = () => {
+    return fetchData("/api/v1/admin/usuarios");
+};
+
+export const updateUserRoleAPI = (userId, newRole) => {
+    return fetchData(`/api/v1/admin/usuarios/${userId}/rol`, {
+        method: 'PUT',
+        body: JSON.stringify({ nuevoRol: newRole }),
+    });
+};
+
+// --- Game API (GameController) ---
+export const fetchAvailableGamesAPI = () => {
+    return fetchData("/games/get/available");
+};
+
+export const fetchAllGamesForAdminAPI = () => {
+    return fetchData("/games/admin");
+};
+
+export const fetchGameByIdAPI = (gameId) => {
+    // NOTA: Este endpoint falta en tu GameController. Ver plan de acción abajo.
+    return fetchData(`/games/get/${gameId}`);
+};
+
+export const deleteGameAPI = (gameId) => {
+    return fetchData(`/games/admin/${gameId}`, { method: 'DELETE' });
+};
+
+// ... Las funciones para crear y editar juegos con imagen son más complejas
+// y las manejamos directamente en los componentes con fetch, lo cual está bien.
+
+// --- Category API (CategoryController) ---
+export const fetchCategoriesAPI = () => {
+    return fetchData("/categories");
+};
+
 export const createCategoryAPI = (categoryData) => {
-  return fetchData("/api/v1/admin/categories", {
-    method: 'POST',
-    body: JSON.stringify(categoryData),
-  });
-};
-
-export const forgotPasswordAPI = (email) => {
-  return fetchData("/api/v1/auth/forgot-password", {
-    method: 'POST',
-    body: JSON.stringify({ email }),
-  });
+    return fetchData("/categories/create", {
+        method: 'POST',
+        body: JSON.stringify(categoryData),
+    });
 };
 
 export const updateCategoryAPI = (categoryId, categoryData) => {
-  return fetchData(`/api/v1/admin/categories/${categoryId}`, {
-    method: 'PUT',
-    body: JSON.stringify(categoryData),
-  });
+    return fetchData(`/categories/${categoryId}`, {
+        method: 'PUT',
+        body: JSON.stringify(categoryData),
+    });
 };
 
 export const deleteCategoryAPI = (categoryId) => {
-  return fetchData(`/api/v1/admin/categories/${categoryId}`, {
-    method: 'DELETE',
-  });
+    return fetchData(`/categories/${categoryId}`, { method: 'DELETE' });
 };
 
-
-export const deleteGameAPI = (gameId) => {
-  return fetchData(`/api/v1/admin/games/${gameId}`, { // Endpoint de ejemplo para borrar
-    method: 'DELETE',
-  });
-};
-
-export const fetchDashboardStatsAPI = () => {
-  return fetchData("/api/v1/admin/stats"); // Asumimos este nuevo endpoint
-};
-
+// --- Wishlist API (WishlistController) ---
 export const fetchWishlistAPI = () => {
-  return fetchData("/api/v1/wishlist");
+    // NOTA: Este endpoint falta en tu WishlistController. Ver plan de acción.
+    return fetchData("/wishlist/me");
 };
-
-export const fetchCategoriesAPI = () => {
-  return fetchData("/api/v1/categories");
-};
-
-export const createGameAPI = (gameData) => {
-  return fetchData("/api/v1/admin/games", { // Endpoint de ejemplo para crear
-    method: 'POST',
-    body: JSON.stringify(gameData),
-  });
-};
-
-export const fetchCategoryByIdAPI = (categoryId) => {
-  return fetchData(`/api/v1/admin/categories/${categoryId}`); // Endpoint de ejemplo
-};
-
-export const fetchGameForEditAPI = (gameId) => {
-  return fetchData(`/games/admin/${gameId}`); // Asumiendo este endpoint
-};
-
-export const updateGameAPI = (gameId, data) => {
-  const isFormData = data instanceof FormData;
-  const token = localStorage.getItem("token");
-  
-  return fetch(`${API_URL}/games/admin/update/${gameId}`, { // Endpoint de ejemplo
-    method: 'PUT',
-    headers: {
-      // Si es FormData, el navegador pone el Content-Type correcto automáticamente.
-      // Si es JSON, lo especificamos nosotros.
-      ...(!isFormData && { 'Content-Type': 'application/json' }),
-      ...(token && { "Authorization": `Bearer ${token}` })
-    },
-    body: isFormData ? data : JSON.stringify(data),
-  });
-};
-
 
 export const addToWishlistAPI = (gameId) => {
-  return fetchData("/api/v1/wishlist", {
-    method: 'POST',
-    body: JSON.stringify({ gameId: gameId }),
-  });
+    // NOTA: Este endpoint falta en tu WishlistController. Ver plan de acción.
+    return fetchData("/wishlist/me/add", {
+        method: 'PUT',
+        body: JSON.stringify({ gameId }),
+    });
+};
+
+// --- Order API (OrderController) ---
+export const fetchOrdersAPI = () => {
+    // NOTA: Este endpoint falta en tu OrderController. Ver plan de acción.
+    return fetchData("/order/me");
 };

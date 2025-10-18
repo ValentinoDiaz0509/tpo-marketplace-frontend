@@ -1,7 +1,6 @@
 // MODIFIED: switched to default import from 'jwt-decode' (was named import)
 // Reason: the library exports the decoder as default. Using the correct import avoids runtime errors.
-import jwtDecode from "jwt-decode";
-
+import { jwtDecode } from "jwt-decode";
 // MODIFIED: made getRole resilient
 // - returns null if no token
 // - catches decode errors and returns null

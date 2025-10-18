@@ -1,6 +1,6 @@
 // --- CONFIGURACIÓN PRINCIPAL ---
 // Lee la URL del backend desde una variable de entorno para mayor seguridad y flexibilidad.
-export const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
+export const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4002";
 
 /**
  * Función genérica para hacer peticiones a la API.

@@ -1,7 +1,8 @@
-/** @type {import('tailwindcss').Config} */
-module.exports = {
-  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
-
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
   theme: {
     extend: {
       colors: {
@@ -10,7 +11,8 @@ module.exports = {
           hover: "#4338CA",
         },
         "background-dark": "#0D1117",
-        "card-dark": "#rgba(1, 1, 1, 1)",
+        // Si querés transparencia, se usa así: bg-card-dark/80 (con opacidad).
+        "card-dark": "#161B22", 
         "text-dark": "#E5E7EB",
         "subtext-dark": "#9CA3AF",
         "border-dark": "#30363D",
@@ -26,6 +28,5 @@ module.exports = {
       },
     },
   },
-
   plugins: [],
-};
+}

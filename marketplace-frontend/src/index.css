@@ -1,10 +1,3 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-body {
-  /* Aquí establecemos los estilos globales para todo el sitio */
-  font-family: "Space Grotesk", sans-serif; /* Usamos la fuente de tu diseño */
-  background-color: #121212; /* Usamos el color de fondo de tu diseño */
-  color: rgba(255, 255, 255, 0.87);
-}

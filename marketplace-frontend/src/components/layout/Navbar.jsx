@@ -1,9 +1,8 @@
 import { Link, NavLink } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext'; 
+import { useAuth } from '../../context/AuthContext';
 
 export default function Navbar() {
- 
-  const { user, logout } = useAuth(); 
+  const { user, logout } = useAuth();
 
   return (
     <header className="sticky top-0 z-50 flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#223649] bg-background-dark/80 px-10 py-3 backdrop-blur-sm">
@@ -16,20 +15,26 @@ export default function Navbar() {
         <h2 className="text-white text-xl font-bold leading-tight tracking-[-0.015em]">Uade Games</h2>
       </Link>
 
-      
+      {/* --- SECCIÓN CORREGIDA --- */}
       <nav className="hidden md:flex items-center gap-6 text-base font-medium text-[#90adcb]">
-        <NavLink to="/" className={({ isActive }) => isActive ? "text-white" : "hover:text-white transition-colors"}>Catálogo</NavLink>
+        <NavLink to="/" className={({ isActive }) => isActive ? "text-white" : "hover:text-white transition-colors"}>
+            Catálogo
+        </NavLink>
         
-            <NavLink to="/wishlist" className={({ isActive }) => isActive ? "text-white" : "hover:text-white transition-colors"}>Wishlist</NavLink>
+        {user && (
+            <NavLink to="/wishlist" className={({ isActive }) => isActive ? "text-white" : "hover:text-white transition-colors"}>
+                Wishlist
+            </NavLink>
         )}
         
-            <NavLink to="/admin/dashboard" className={({ isActive }) => isActive ? "text-white" : "hover:text-white transition-colors"}>Admin</NavLink>
+        {user?.role === "ADMIN" && (
+            <NavLink to="/admin/dashboard" className={({ isActive }) => isActive ? "text-white" : "hover:text-white transition-colors"}>
+                Admin
+            </NavLink>
         )}
       </nav>
 
-    
       <div className="flex flex-1 justify-end gap-4 items-center">
-        
         <div className="flex gap-2">
           <Link to="/cart" className="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 bg-[#223649] text-white gap-2 text-sm font-bold min-w-0 px-2.5">
             <span className="material-symbols-outlined">shopping_cart</span>

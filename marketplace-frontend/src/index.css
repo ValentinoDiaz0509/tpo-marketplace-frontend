@@ -2,19 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  /* Estas son buenas prácticas que vienen por defecto y las mantenemos */
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
 body {
   /* Aquí establecemos los estilos globales para todo el sitio */
-  font-family: "Krona One", sans-serif;
-  background-color: #0d1117;
+  font-family: "Space Grotesk", sans-serif; /* Usamos la fuente de tu diseño */
+  background-color: #121212; /* Usamos el color de fondo de tu diseño */
   color: rgba(255, 255, 255, 0.87);
-  margin: 0; /* Aseguramos que no haya márgenes por defecto */
-  padding: 0; /* Aseguramos que no haya padding por defecto */
 }

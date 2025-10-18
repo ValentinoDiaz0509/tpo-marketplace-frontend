@@ -1,3 +1,4 @@
+/** @type {import('tailwindcss').Config} */
 export default {
   content: [
     "./index.html",
@@ -6,16 +7,23 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: {
-          DEFAULT: "#4F46E5",
-          hover: "#4338CA",
-        },
-        "background-dark": "#0D1117",
-        // Si querés transparencia, se usa así: bg-card-dark/80 (con opacidad).
-        "card-dark": "#161B22", 
-        "text-dark": "#E5E7EB",
-        "subtext-dark": "#9CA3AF",
-        "border-dark": "#30363D",
+        // Colores del Admin Panel y Login
+        "primary": "#32CD32",
+        "background-dark": "#121212",
+        "component-dark": "#1E1E1E",
+        "modal-background-dark": "#1E1E1E",
+        
+        // Colores del Sitio Principal (Home, Details)
+        "secondary": "#DA00FF", // El color fucsia/violeta
+        "brand-lime": "#84CC16",
+        "brand-blue": "#0d7ff2",
+
+        // Paleta de grises
+        "brand-gray": {
+          light: "#90adcb", // Textos secundarios
+          medium: "#223649", // Fondos de botones/inputs
+          dark: "#182634",  // Fondos de secciones
+        }
       },
       fontFamily: {
         display: ["Space Grotesk", "sans-serif"],

@@ -1,20 +1,28 @@
-import GameDetail from "../components/pages/GameDetail";
-import Wishlist from '../components/pages/Wishlist';
 import Home from "../components/pages/Home";
 import Login from "../components/pages/Login";
 import Register from "../components/pages/Register";
 import Profile from "../components/pages/Profile";
-import AdminDashboard from "../components/pages/AdminDashboard";
+import GameDetail from "../components/pages/GameDetail";
+import Wishlist from '../components/pages/Wishlist';
+import Orders from '../components/pages/Orders';
+import ForgotPassword from '../components/pages/ForgotPassword';
+
+// Páginas y Layout de Administrador
 import AdminLayout from "../components/layout/AdminLayout";
-import AdminCategoryList from "../components/pages/AdminCategoryList";
+import AdminDashboard from "../components/pages/AdminDashboard";
 import AdminUserList from "../components/pages/AdminUserList";
 import AdminGameList from "../components/pages/AdminGameList";
 import AdminCreateGame from "../components/pages/AdminCreateGame";
+import AdminEditGame from "../components/pages/AdminEditGame";
+import AdminCategoryList from "../components/pages/AdminCategoryList";
 import AdminCreateCategory from "../components/pages/AdminCreateCategory";
 import AdminEditCategory from "../components/pages/AdminEditCategory";
-import AdminEditGame from "../components/pages/AdminEditGame";
+
+
+// --- DEFINICIÓN DE RUTAS ---
 
 export const routes = [
+  // --- RUTAS PÚBLICAS Y DE USUARIO (NIVEL PRINCIPAL) ---
   {
     id: "home",
     path: "/",
@@ -34,17 +42,37 @@ export const routes = [
     requiredRole: null,
   },
   {
+    id: "forgot-password",
+    path: "/forgot-password",
+    Element: ForgotPassword,
+    requiredRole: null,
+  },
+  {
     id: "userProfile",
     path: "/userProfile",
     Element: Profile,
     requiredRole: "USER",
   },
   {
-    id: "game-detail",       
-    path: "/detail/:id",      
-    Element: GameDetail,      
-    requiredRole: "USER",      
+    id: "game-detail",
+    path: "/detail/:id",
+    Element: GameDetail,
+    requiredRole: "USER",
   },
+  {
+    id: "wishlist",
+    path: "/wishlist",
+    Element: Wishlist,
+    requiredRole: "USER",
+  },
+  {
+    id: "orders",
+    path: "/orders",
+    Element: Orders,
+    requiredRole: "USER",
+  },
+
+  // --- RUTA PRINCIPAL DE ADMIN (CON SUS HIJOS ANIDADOS) ---
   {
     id: "admin",
     path: "/admin",
@@ -57,10 +85,24 @@ export const routes = [
         Element: AdminDashboard,
       },
       {
-        id: "wishlist",
-        path: "/wishlist",
-        Element: Wishlist,
-        requiredRole: "USER", // Requiere que el usuario esté logueado
+        id: "admin-users",
+        path: "users",
+        Element: AdminUserList,
+      },
+      {
+        id: "admin-games",
+        path: "games",
+        Element: AdminGameList,
+      },
+      {
+        id: "admin-create-game",
+        path: "games/create",
+        Element: AdminCreateGame,
+      },
+      {
+        id: "admin-edit-game",
+        path: "games/edit/:id",
+        Element: AdminEditGame,
       },
       {
         id: "admin-categories",
@@ -76,38 +118,6 @@ export const routes = [
         id: "admin-edit-category",
         path: "categories/edit/:id",
         Element: AdminEditCategory,
-      },
-      {
-        id: "admin-games",
-        path: "games",
-        Element: AdminGameList,
-      },
-      {
-        id: "orders",
-        path: "/orders",
-        Element: Orders,
-        requiredRole: "USER",
-      },
-      {
-        id: "forgot-password",
-        path: "/forgot-password",
-        Element: ForgotPassword,
-        requiredRole: null, // Es una página pública
-      },
-      {
-        id: "admin-create-game",
-        path: "games/create",
-        Element: AdminCreateGame,
-      },
-      {
-        id: "admin-edit-game",
-        path: "games/edit/:id",
-        Element: AdminEditGame,
-      },
-      {
-        id: "admin-users",
-        path: "users",
-        Element: AdminUserList,
       },
     ],
   },

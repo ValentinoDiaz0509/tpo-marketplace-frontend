@@ -11,7 +11,9 @@ const AdminEditGame = () => {
   const [discount, setDiscount] = useState("");
   const [platform, setPlatform] = useState("");
   const [categories, setCategories] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState("");
+  // Ahora permitimos seleccionar varias categorías. Guardamos como array de strings
+  // porque los valores del <select> vienen como strings. Convertimos a números al enviar.
+  const [selectedCategories, setSelectedCategories] = useState([]);
   const [imageFile, setImageFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [existingImage, setExistingImage] = useState(null);
@@ -35,7 +37,8 @@ const AdminEditGame = () => {
         setStock(data.stock);
         setDiscount(data.discount);
         setPlatform(data.platform);
-        setSelectedCategory(data.categories[0]?.id || "");
+        // Prefill selected categories (guardar como strings para el select múltiple)
+        setSelectedCategories((data.categories || []).map((c) => String(c.id)));
         setExistingImage(data.imageUrl);
       })
       .catch((err) => console.error("Error al cargar el juego:", err));
@@ -58,7 +61,8 @@ const AdminEditGame = () => {
       title,
       price: parseFloat(price),
       stock: parseInt(stock),
-      categoriesIds: [parseInt(selectedCategory)],
+      // Convertir a números antes de enviar
+      categoriesIds: selectedCategories.map((c) => parseInt(c)),
       platform,
       discount: parseFloat(discount),
     };
@@ -162,20 +166,24 @@ const AdminEditGame = () => {
         </div>
 
         <div>
-          <label>Categoría:</label>
-          <select
-            style={{ border: "1px solid white" }}
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-            required
-          >
-            <option value="">Selecciona una categoría</option>
-            {categories.map((cat) => (
-              <option key={cat.id} value={cat.id}>
-                {cat.name}
-              </option>
-            ))}
-          </select>
+          <label>Categorías:</label>
+            <select
+              style={{ border: "1px solid white" }}
+              multiple
+              size={Math.min(6, categories.length || 3)}
+              value={selectedCategories}
+              onChange={(e) => {
+                const values = Array.from(e.target.selectedOptions).map((o) => o.value);
+                setSelectedCategories(values);
+              }}
+              required
+            >
+              {categories.map((cat) => (
+                <option key={cat.id} value={String(cat.id)}>
+                  {cat.name}
+                </option>
+              ))}
+            </select>
         </div>
 
         <div>

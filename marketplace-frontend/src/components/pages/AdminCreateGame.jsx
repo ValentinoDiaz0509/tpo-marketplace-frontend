@@ -7,7 +7,7 @@ export default function AdminCreateGame() {
     price: "",
     discount: "",
     stock: "",
-    categoriesIds: "",
+    categoriesIds: [],
     platform: "",
     imageUrl: "",
   });
@@ -25,24 +25,18 @@ export default function AdminCreateGame() {
   }, []);
 
   const handleChange = (e) => {
-    let value = e.target.value;
     const name = e.target.name;
-
-    if (name === "categoriesIds" && value) {
-      // 1. Convertir el ID a número (entero)
-      const numericId = parseInt(value, 10);
-      // 2. Envolverlo en un array de un solo elemento
-      value = [numericId];
-    } else if (name === "categoriesIds" && !value) {
-      // Si la opción "Seleccionar categoría" está seleccionada
-      value = [];
+    if (name === 'categoriesIds') {
+      // multi-select: obtener todos los options seleccionados
+      const selected = e.target.selectedOptions;
+      const values = Array.from(selected).map((opt) => parseInt(opt.value, 10));
+      setForm({ ...form, [name]: values });
+      return;
     }
-    // Si no es categoriesIds, el valor se mantiene como string (ej. title, platform)
 
-    setForm({
-      ...form,
-      [name]: value,
-    });
+    // para el resto de campos
+    let value = e.target.value;
+    setForm({ ...form, [name]: value });
   };
 
   // Envío del formulario
@@ -51,12 +45,12 @@ export default function AdminCreateGame() {
     console.log(form);
 
     try {
-      const response = await fetchData("/games/admin/create", {
+      const created = await fetchData("/games/admin/create", {
         method: "POST",
         body: JSON.stringify(form),
       });
-
-      if (response.ok) {
+      // Si el backend devuelve el objeto creado, asumimos éxito
+      if (created) {
         alert("🎮 Videojuego creado con éxito");
       }
     } catch (error) {
@@ -138,9 +132,10 @@ export default function AdminCreateGame() {
             name="categoriesIds"
             onChange={handleChange}
             className="w-full border rounded-lg p-2"
+            multiple
+            size={Math.min(6, categories.length || 6)}
             required
           >
-            <option value="">Seleccionar categoría</option>
             {categories &&
               categories.map((cat) => (
                 <option key={cat.id} value={cat.id}>

@@ -55,7 +55,7 @@ export default function GameDetail(){
     <div className="max-w-3xl mx-auto p-6">
       <div style={{display:'flex', gap:20}}>
         <img
-          src={game.imageUrl ? encodeURI(game.imageUrl) : game.imageUrl}
+          src={game.imageUrl}
           alt={game.title}
           onError={(e)=>{ e.target.onerror = null; e.target.src = '/placeholder-game.png'; }}
           style={{width:300, height:300, objectFit:'cover', borderRadius:8}}
@@ -63,7 +63,9 @@ export default function GameDetail(){
         <div>
           <h1 className="text-2xl font-bold">{game.title}</h1>
           <p className="mt-2">{game.description}</p>
-          <p className="mt-4 font-bold">Precio: ${game.finalPrice ?? game.price}</p>
+          <p className="mt-4 font-bold">
+              Precio: ${(Number(game.finalPrice ?? game.price) || 0).toFixed(2)}
+          </p>          
           <p>Stock disponible: {game.stock}</p>
           <form onSubmit={handleBuy} className="mt-4">
             <label className="block">Cantidad</label>
@@ -78,3 +80,4 @@ export default function GameDetail(){
     </div>
   )
 }
+

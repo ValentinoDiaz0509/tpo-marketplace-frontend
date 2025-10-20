@@ -37,7 +37,12 @@ export default function AdminGameList() {
 
   return (
     <div>
-      <h2>Juegos</h2>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <h2>Juegos</h2>
+        <button onClick={() => navigate('/admin/games/create')} style={{ background: '#2b6cb0', color: 'white', padding: '6px 10px', borderRadius: 6 }}>
+          Crear juego
+        </button>
+      </div>
       {games.map((g) => (
         <div key={g.id} style={{ display: "flex", gap: "12px", alignItems: "center" }}>
           <div style={{ flex: 1 }}>

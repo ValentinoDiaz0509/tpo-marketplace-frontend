@@ -1,9 +1,12 @@
+import { Link } from 'react-router-dom';
+
 export default function GameCard({ game }) {
   // Verifica si el juego tiene un descuento válido
   const hasDiscount = game.discount && game.discount > 0;
 
   return (
-    <div
+    <Link to={`/detail/${game.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+      <div
       style={{
         border: "1px solid #ccc",
         borderRadius: "8px",
@@ -62,6 +65,7 @@ export default function GameCard({ game }) {
       </div>
 
       {/* El botón de añadir al carrito se puede agregar aquí en la próxima entrega */}
-    </div>
+      </div>
+    </Link>
   );
 }

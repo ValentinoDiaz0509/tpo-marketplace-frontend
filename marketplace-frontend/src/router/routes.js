@@ -12,8 +12,8 @@ import AdminCreateCategory from "../components/pages/AdminCreateCategory";
 import AdminEditCategory from "../components/pages/AdminEditCategory";
 import AdminEditGame from "../components/pages/AdminEditGame";
 import GameDetail from "../components/pages/GameDetail";
-// 👇 1. IMPORTACIÓN AÑADIDA
 import Orders from "../components/pages/Orders";
+import Wishlist from "../components/pages/Wishlist";
 
 export const routes = [
   {
@@ -52,6 +52,12 @@ export const routes = [
     path: "/orders",
     Element: Orders,
     requiredRole: "USER",
+  },
+  {
+    id: "wishlist",
+    path: "/wishlist",
+    Element: Wishlist,
+    requiredRole: "USER", // La wishlist solo debe ser visible para usuarios logueados
   },
   {
     id: "admin",

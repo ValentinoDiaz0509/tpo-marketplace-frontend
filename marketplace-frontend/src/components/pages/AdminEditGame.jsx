@@ -8,6 +8,7 @@ const AdminEditGame = () => {
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState("");
   const [stock, setStock] = useState("");
+  const [discount, setDiscount] = useState("");
   const [platform, setPlatform] = useState("");
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -26,12 +27,13 @@ const AdminEditGame = () => {
 
   // 🔹 Cargar datos del juego
   useEffect(() => {
-    fetch(`http://localhost:4002/games/admin/${id}`)
+    fetch(`http://localhost:4002/games/get/${id}`)
       .then((res) => res.json())
       .then((data) => {
         setTitle(data.title);
         setPrice(data.price);
         setStock(data.stock);
+        setDiscount(data.discount);
         setPlatform(data.platform);
         setSelectedCategory(data.categories[0]?.id || "");
         setExistingImage(data.imageUrl);
@@ -58,6 +60,7 @@ const AdminEditGame = () => {
       stock: parseInt(stock),
       categoriesIds: [parseInt(selectedCategory)],
       platform,
+      discount: parseFloat(discount),
     };
 
     try {
@@ -80,7 +83,7 @@ const AdminEditGame = () => {
         );
       } else {
         // Si no cambia la imagen
-        response = await fetch(`http://localhost:4002/games/admin/${id}`, {
+        response = await fetchData(`/games/admin/${id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(gameData),
@@ -89,11 +92,9 @@ const AdminEditGame = () => {
 
       if (response.ok) {
         alert("✅ Videojuego actualizado correctamente");
-      } else {
-        alert("❌ Error al actualizar el videojuego");
       }
     } catch (error) {
-      console.error("Error al editar el videojuego:", error);
+      console.error("Error al editar el videojuego:", error.message);
     }
   };
 
@@ -122,6 +123,18 @@ const AdminEditGame = () => {
             step="0.01"
             value={price}
             onChange={(e) => setPrice(e.target.value)}
+            required
+          />
+        </div>
+
+        <div>
+          <label>Descuento:</label>
+          <input
+            style={{ border: "1px solid white" }}
+            type="number"
+            step="0.01"
+            value={discount}
+            onChange={(e) => setDiscount(e.target.value)}
             required
           />
         </div>

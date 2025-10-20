@@ -2,13 +2,17 @@ import React, { useState, useEffect } from "react";
 import { fetchData } from "../../utils/api";
 
 export default function AdminCreateGame() {
-  const [title, setTitle] = useState("");
-  const [price, setPrice] = useState("");
-  const [stock, setStock] = useState("");
-  const [categoryId, setCategoryId] = useState("");
-  const [platform, setPlatform] = useState("");
-  const [image, setImage] = useState(null);
-  const [preview, setPreview] = useState(null);
+  const [form, setForm] = useState({
+    title: "",
+    price: "",
+    discount: "",
+    stock: "",
+    categoriesIds: "",
+    platform: "",
+    imageUrl: "",
+  });
+
+  /* const [preview, setPreview] = useState(null); */
   const [categories, setCategories] = useState([]);
 
   // Cargar categorías del backend
@@ -20,48 +24,43 @@ export default function AdminCreateGame() {
       .catch(() => alert("Error al cargar categorías"));
   }, []);
 
-  // Manejo de imagen
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    setImage(file);
-    if (file) {
-      setPreview(URL.createObjectURL(file));
+  const handleChange = (e) => {
+    let value = e.target.value;
+    const name = e.target.name;
+
+    if (name === "categoriesIds" && value) {
+      // 1. Convertir el ID a número (entero)
+      const numericId = parseInt(value, 10);
+      // 2. Envolverlo en un array de un solo elemento
+      value = [numericId];
+    } else if (name === "categoriesIds" && !value) {
+      // Si la opción "Seleccionar categoría" está seleccionada
+      value = [];
     }
+    // Si no es categoriesIds, el valor se mantiene como string (ej. title, platform)
+
+    setForm({
+      ...form,
+      [name]: value,
+    });
   };
 
   // Envío del formulario
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const formData = new FormData();
-    formData.append("titulo", title);
-    formData.append("precio", price);
-    formData.append("stock", stock);
-    formData.append("plataforma", platform);
-    formData.append("categoriaId", categoryId);
-    formData.append("imagen", image); // clave igual a la que espera el backend
+    console.log(form);
 
     try {
-      const response = await fetch("http://localhost:4002/games/admin/create", {
+      const response = await fetchData("/games/admin/create", {
         method: "POST",
-        body: formData,
+        body: JSON.stringify(form),
       });
 
       if (response.ok) {
         alert("🎮 Videojuego creado con éxito");
-        // limpiar formulario
-        setTitle("");
-        setPrice("");
-        setStock("");
-        setPlatform("");
-        setCategoryId("");
-        setImage(null);
-        setPreview(null);
-      } /* else {
-        alert("❌ Error al crear el videojuego");
-      } */
+      }
     } catch (error) {
-      console.error("Error al enviar:", error);
+      console.error("Error al enviar:", error.message);
     }
   };
 
@@ -76,9 +75,9 @@ export default function AdminCreateGame() {
         <div>
           <label className="block font-medium mb-1">Título</label>
           <input
+            name="title"
             type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            onChange={handleChange}
             className="w-full border rounded-lg p-2"
             required
           />
@@ -88,10 +87,22 @@ export default function AdminCreateGame() {
         <div>
           <label className="block font-medium mb-1">Precio ($)</label>
           <input
+            name="price"
             type="number"
-            value={price}
-            onChange={(e) => setPrice(e.target.value)}
+            onChange={handleChange}
             className="w-full border rounded-lg p-2"
+            required
+          />
+        </div>
+
+        <div>
+          <label>Descuento:</label>
+          <input
+            name="discount"
+            style={{ border: "1px solid white" }}
+            type="number"
+            step="0.01"
+            onChange={handleChange}
             required
           />
         </div>
@@ -100,9 +111,9 @@ export default function AdminCreateGame() {
         <div>
           <label className="block font-medium mb-1">Stock</label>
           <input
+            name="stock"
             type="number"
-            value={stock}
-            onChange={(e) => setStock(e.target.value)}
+            onChange={handleChange}
             className="w-full border rounded-lg p-2"
             required
           />
@@ -112,9 +123,9 @@ export default function AdminCreateGame() {
         <div>
           <label className="block font-medium mb-1">Plataforma</label>
           <input
+            name="platform"
             type="text"
-            value={platform}
-            onChange={(e) => setPlatform(e.target.value)}
+            onChange={handleChange}
             className="w-full border rounded-lg p-2"
             required
           />
@@ -124,8 +135,8 @@ export default function AdminCreateGame() {
         <div>
           <label className="block font-medium mb-1">Categoría</label>
           <select
-            value={categoryId}
-            onChange={(e) => setCategoryId(e.target.value)}
+            name="categoriesIds"
+            onChange={handleChange}
             className="w-full border rounded-lg p-2"
             required
           >
@@ -141,21 +152,21 @@ export default function AdminCreateGame() {
 
         {/* Imagen */}
         <div>
-          <label className="block font-medium mb-1">Imagen</label>
+          <label className="block font-medium mb-1">Imagen(URL)</label>
           <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-            className="w-full"
+            name="imageUrl"
+            type="text"
+            onChange={handleChange}
+            className="w-full border rounded-lg p-2"
             required
           />
-          {preview && (
+          {/* {preview && (
             <img
-              src={preview}
+              src={form.imageUrl}
               alt="Vista previa"
               className="mt-3 w-48 h-48 object-cover rounded-lg"
             />
-          )}
+          )} */}
         </div>
 
         {/* Botón */}

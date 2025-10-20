@@ -1,18 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { fetchData } from "../../utils/api";
 
 const AdminEditCategory = () => {
   const { id } = useParams(); // obtiene el id desde la URL (ej: /edit-category/3)
   const [name, setName] = useState("");
 
   useEffect(() => {
-    // Cargar los datos de la categoría actual (falta agreagar en el back)
-    fetch(`http://localhost:4002/categories/${id}`)
-      .then((res) => res.json())
+    fetchData(`/categories/${id}`)
       .then((data) => {
         setName(data.name);
       })
-      .catch((err) => console.error("Error al cargar la categoría:", err));
+      .catch(() => alert("Error al cargar categorías"));
   }, [id]);
 
   const handleSubmit = async (e) => {
@@ -21,7 +20,7 @@ const AdminEditCategory = () => {
     const updatedCategory = { name };
 
     try {
-      const response = await fetch(`http://localhost:4002/categories/${id}`, {
+      const response = await fetchData(`/categories/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -31,11 +30,9 @@ const AdminEditCategory = () => {
 
       if (response.ok) {
         alert("✅ Categoría actualizada correctamente");
-      } else {
-        alert("❌ Error al actualizar la categoría");
       }
     } catch (error) {
-      console.error("Error al editar la categoría:", error);
+      console.error("Error al editar la categoría:", error.message);
     }
   };
 

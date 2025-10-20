@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { fetchData } from "../../utils/api";
 
 const AdminCreateCategory = () => {
   const [name, setName] = useState("");
@@ -9,7 +10,7 @@ const AdminCreateCategory = () => {
     const categoryData = { name };
 
     try {
-      const response = await fetch("http://localhost:4002/categories/create", {
+      const response = await fetchData("/categories/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -20,11 +21,9 @@ const AdminCreateCategory = () => {
       if (response.ok) {
         alert("✅ Categoría creada exitosamente");
         setName("");
-      } else {
-        alert("❌ Error al crear la categoría");
       }
     } catch (error) {
-      console.error("Error al crear la categoría:", error);
+      console.error("Error al crear la categoría:", error.message);
     }
   };
 

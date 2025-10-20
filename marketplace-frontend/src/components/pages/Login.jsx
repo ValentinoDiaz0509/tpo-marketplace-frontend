@@ -1,7 +1,8 @@
 import { useState, useContext } from "react";
 import { fetchData } from "../../utils/api";
 import { AuthContext } from "../../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import { jwtDecode } from "jwt-decode"; // No te olvides de importar esto
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -18,13 +19,26 @@ export default function Login() {
       });
 
       if (res.access_token) {
-        login(res.access_token);
-        // Redirigir al catálogo de juegos después del login exitoso
-        navigate("/");
+        const token = res.access_token;
+        login(token); // Guarda el token en el contexto
+
+        // --- LÓGICA DE REDIRECCIÓN POR ROL ---
+        // 1. Decodifica el token para obtener los datos del usuario
+        const decodedToken = jwtDecode(token);
+        const userRole = decodedToken.role; // Asumo que el rol está en el campo 'role'
+
+        // 2. Comprueba el rol y redirige a la ruta correspondiente
+        if (userRole === 'ADMIN') {
+          navigate("/admin/dashboard"); // Si es ADMIN, va al dashboard de admin
+        } else {
+          navigate("/"); // Si es cualquier otro rol, va a la página principal
+        }
+
       } else {
         alert("La respuesta del servidor no es válida.");
       }
-    } catch {
+    } catch (err) {
+      console.error("Error de login:", err)
       alert("Credenciales incorrectas");
     }
   };
@@ -36,20 +50,22 @@ export default function Login() {
         <input
           type="email"
           placeholder="Email"
+          value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
         <input
           type="password"
           placeholder="Contraseña"
+          value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
         <button type="submit">Ingresar</button>
       </form>
       <p>
-        <a href="/register">Registrarme</a>
+        <Link to="/register">Registrarme</Link>
       </p>
       <p>
-        <a href="/forgot-password">¿Olvidaste tu contraseña?</a>
+        <Link to="/forgot-password">¿Olvidaste tu contraseña?</Link>
       </p>
     </div>
   );

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { fetchData } from "../../utils/api";
+import { fetchData, API_URL } from "../../utils/api";
 
 export default function AdminCreateGame() {
   const [form, setForm] = useState({
@@ -14,6 +14,8 @@ export default function AdminCreateGame() {
 
   /* const [preview, setPreview] = useState(null); */
   const [categories, setCategories] = useState([]);
+  const [imageFile, setImageFile] = useState(null);
+  const [preview, setPreview] = useState(null);
 
   // Cargar categorías del backend
   useEffect(() => {
@@ -39,16 +41,48 @@ export default function AdminCreateGame() {
     setForm({ ...form, [name]: value });
   };
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImageFile(file);
+      setPreview(URL.createObjectURL(file));
+    } else {
+      setImageFile(null);
+      setPreview(null);
+    }
+  };
+
   // Envío del formulario
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(form);
 
     try {
-      const created = await fetchData("/games/admin/create", {
-        method: "POST",
-        body: JSON.stringify(form),
-      });
+      let created;
+
+      // If an image file was selected, upload as multipart to the backend endpoint
+      if (imageFile) {
+        const formData = new FormData();
+        formData.append('title', form.title);
+        formData.append('price', form.price);
+        formData.append('stock', form.stock);
+        formData.append('platform', form.platform);
+        // append categoriesIds as multiple fields
+        (form.categoriesIds || []).forEach((id) => formData.append('categoriesIds', id));
+        formData.append('imagen', imageFile);
+
+        const token = localStorage.getItem('token');
+        const res = await fetch(`${API_URL}/games/admin/create-with-image`, {
+          method: 'POST',
+          body: formData,
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        });
+
+        if (!res.ok) throw new Error(`Error ${res.status}`);
+        created = await res.json();
+      } else {
+        created = await fetchData('/games/admin/create', { method: 'POST', body: JSON.stringify(form) });
+      }
       // Si el backend devuelve el objeto creado, asumimos éxito
       if (created) {
         alert("🎮 Videojuego creado con éxito");
@@ -147,24 +181,28 @@ export default function AdminCreateGame() {
 
         {/* Imagen */}
         <div>
-          <label className="block font-medium mb-1">Imagen(URL)</label>
+          <label className="block font-medium mb-1">Imagen (URL)</label>
           <input
             name="imageUrl"
             type="text"
             onChange={handleChange}
-            className="w-full border rounded-lg p-2"
-            required
+            className="w-full border rounded-lg p-2 mb-2"
+            placeholder="O pegá una URL directa aquí si ya la tenés"
           />
-          {/* {preview && (
-            <img
-              src={form.imageUrl}
-              alt="Vista previa"
-              className="mt-3 w-48 h-48 object-cover rounded-lg"
-            />
-          )} */}
+
+          <div className="mt-2">
+            <label className="block font-medium mb-1">O subir imagen</label>
+            <input type="file" accept="image/*" onChange={handleImageChange} />
+          </div>
+
+          {preview && (
+            <img src={preview} alt="Preview" className="mt-3 w-48 h-48 object-cover rounded-lg" />
+          )}
+          {form.imageUrl && !preview && (
+            <img src={form.imageUrl.startsWith('http') ? encodeURI(form.imageUrl) : encodeURI(`http://localhost:4002${form.imageUrl}`)} alt="Preview URL" className="mt-3 w-48 h-48 object-cover rounded-lg" />
+          )}
         </div>
 
-        {/* Botón */}
         <button
           type="submit"
           className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"

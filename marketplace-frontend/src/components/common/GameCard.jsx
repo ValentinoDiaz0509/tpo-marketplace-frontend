@@ -19,7 +19,7 @@ export default function GameCard({ game }) {
         }}
       >
         <img
-          src={game.imageUrl}
+          src={game.imageUrl ? encodeURI(game.imageUrl) : game.imageUrl}
           alt={game.name || game.title}
           style={{
             width: "100%",

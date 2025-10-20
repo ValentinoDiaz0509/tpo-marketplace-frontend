@@ -129,7 +129,7 @@ export default function Wishlist() {
         {wishlist.games.map(game => (
           <div key={game.id} style={styles.item}>
             <Link to={`/detail/${game.id}`}>
-              <img style={styles.itemImage} src={game.imageUrl || '/placeholder-game.png'} alt={game.name} />
+              <img style={styles.itemImage} src={game.imageUrl ? encodeURI(game.imageUrl) : '/placeholder-game.png'} alt={game.name} />
             </Link>
             <div style={styles.itemInfo}>
               <h3 style={styles.itemTitle}>{game.name}</h3>

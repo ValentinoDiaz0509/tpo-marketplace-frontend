@@ -83,6 +83,9 @@ const AdminEditGame = () => {
           {
             method: "PUT",
             body: formData,
+            headers: {
+              ...(localStorage.getItem('token') ? { Authorization: `Bearer ${localStorage.getItem('token')}` } : {}),
+            },
           }
         );
       } else {
@@ -207,7 +210,7 @@ const AdminEditGame = () => {
         ) : existingImage ? (
           <div style={{ marginTop: "10px" }}>
             <img
-              src={`http://localhost:4002${existingImage}`}
+              src={existingImage && existingImage.startsWith("http") ? existingImage : `http://localhost:4002${existingImage}`}
               alt="Imagen actual"
               style={{ width: "100%", borderRadius: "10px" }}
             />

@@ -55,7 +55,7 @@ export default function GameDetail(){
     <div className="max-w-3xl mx-auto p-6">
       <div style={{display:'flex', gap:20}}>
         <img
-          src={game.imageUrl}
+          src={game.imageUrl ? encodeURI(game.imageUrl) : game.imageUrl}
           alt={game.title}
           onError={(e)=>{ e.target.onerror = null; e.target.src = '/placeholder-game.png'; }}
           style={{width:300, height:300, objectFit:'cover', borderRadius:8}}

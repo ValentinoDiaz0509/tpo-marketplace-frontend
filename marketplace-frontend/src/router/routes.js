@@ -11,6 +11,9 @@ import AdminCreateGame from "../components/pages/AdminCreateGame";
 import AdminCreateCategory from "../components/pages/AdminCreateCategory";
 import AdminEditCategory from "../components/pages/AdminEditCategory";
 import AdminEditGame from "../components/pages/AdminEditGame";
+import GameDetail from "../components/pages/GameDetail";
+// 👇 1. IMPORTACIÓN AÑADIDA
+import Orders from "../components/pages/Orders";
 
 export const routes = [
   {
@@ -37,11 +40,19 @@ export const routes = [
     Element: Profile,
     requiredRole: "USER",
   },
-  /* {
-    id: "detail",
+  {
+    id: "gameDetail",
     path: "/detail/:id",
-    Element: Detail,
-  }, */
+    Element: GameDetail,
+    requiredRole: null,
+  },
+  // 👇 2. RUTA AÑADIDA
+  {
+    id: "orders",
+    path: "/orders",
+    Element: Orders,
+    requiredRole: "USER",
+  },
   {
     id: "admin",
     path: "/admin",

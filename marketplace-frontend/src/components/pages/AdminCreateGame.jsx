@@ -65,6 +65,7 @@ export default function AdminCreateGame() {
         const formData = new FormData();
         formData.append('title', form.title);
         formData.append('price', form.price);
+  formData.append('discount', form.discount || 0);
         formData.append('stock', form.stock);
         formData.append('platform', form.platform);
         // append categoriesIds as multiple fields

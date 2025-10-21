@@ -27,26 +27,8 @@ export default function GameDetail(){
       navigate('/login');
       return;
     }
-
-    // Juegos virtuales: no se requiere dirección. Enviar cadena vacía para cumplir el contrato backend.
-    const payload = { address: "", itemList: [{ gameId: Number(id), quantity: Number(quantity) }] };
-    console.log('Order payload:', payload);
-    try{
-      const res = await fetchData('/order', { method: 'POST', body: JSON.stringify(payload) });
-      alert('Pedido creado correctamente. ID: ' + (res.id || 'n/a'));
-      navigate('/orders');
-    }catch(err){
-      console.error(err);
-      // If backend returns 403, likely the token is invalid/expired or user lacks permissions
-      if (err.message && err.message.includes('403')) {
-        alert('No autorizado. Por favor inicia sesión nuevamente.');
-        // Remove possibly invalid token and redirect to login
-        localStorage.removeItem('token');
-        navigate('/login');
-        return;
-      }
-      alert('Error al crear el pedido: ' + (err.message || err));
-    }
+    // Navegar al formulario de pago (mock). Pasamos la cantidad y el id del juego en la ruta.
+    navigate(`/checkout/${id}?quantity=${encodeURIComponent(quantity)}`);
   }
   if(loading) return <p>Cargando...</p>;
   if(!game) return <p>Juego no encontrado</p>;

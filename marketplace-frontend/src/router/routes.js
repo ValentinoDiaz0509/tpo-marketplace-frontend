@@ -53,6 +53,12 @@ export const routes = [
     Element: GameDetail,
     requiredRole: null,
   },
+  {
+    id: "checkout",
+    path: "/checkout/:gameId",
+    Element: () => import('../components/pages/PaymentForm').then(m => m.default),
+    requiredRole: "USER",
+  },
   // 👇 2. RUTA AÑADIDA
   {
     id: "orders",

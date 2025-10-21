@@ -1,19 +1,26 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
-
   theme: {
     extend: {
       colors: {
-        primary: {
-          DEFAULT: "#4F46E5",
-          hover: "#4338CA",
+        // Colores del Admin Panel y Login
+        primary: "#32CD32",
+        "background-dark": "#121212",
+        "component-dark": "#1E1E1E",
+        "modal-background-dark": "#1E1E1E",
+
+        // Colores del Sitio Principal (Home, Details)
+        secondary: "#DA00FF", // El color fucsia/violeta
+        "brand-lime": "#84CC16",
+        "brand-blue": "#0d7ff2",
+
+        // Paleta de grises
+        "brand-gray": {
+          light: "#90adcb", // Textos secundarios
+          medium: "#223649", // Fondos de botones/inputs
+          dark: "#182634", // Fondos de secciones
         },
-        "background-dark": "#0D1117",
-        "card-dark": "#rgba(1, 1, 1, 1)",
-        "text-dark": "#E5E7EB",
-        "subtext-dark": "#9CA3AF",
-        "border-dark": "#30363D",
       },
       fontFamily: {
         display: ["Space Grotesk", "sans-serif"],
@@ -26,6 +33,5 @@ module.exports = {
       },
     },
   },
-
   plugins: [],
 };

@@ -7,13 +7,14 @@ export default function Navbar() {
 
   return (
     <header className="w-full px-4 sm:px-6 lg:px-8">
-      <div className="container mx-auto flex items-center justify-between py-4 border-b border-border-light dark:border-border-dark">
+      <div className="w-full flex items-center justify-between py-4 border-b border-border-light dark:border-border-dark">
         <h2 class="text-2xl font-bold">GameSphere</h2>
         <nav className="hidden md:flex items-center gap-6">
           {token ? (
             <>
               {role && role == "USER" && <Link to="/">Catálogo</Link>}
               {role && role == "USER" && <Link to="/wishlist">Wishlist</Link>}
+              {role && role == "USER" && <Link to="/orders">Mis compras</Link>}
 
               <Link to="/userProfile">Mi perfil</Link>
               {role && role == "ADMIN" && (

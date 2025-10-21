@@ -73,31 +73,26 @@ export default function Home() {
   }, [games, title, category, minPrice, maxPrice]);
 
   return (
-    <div>
-      <h2>Catálogo de Juegos</h2>
+    <div className="px-[50px] mb-[4rem]">
+      <h2 className="my-[20px] text-[30px]">Catálogo de Juegos</h2>
 
       {/* Formulario con filtros */}
       <form style={{ marginBottom: "2rem" }}>
-        <div
-          style={{
-            display: "flex",
-            gap: "1rem",
-            alignItems: "center",
-            flexWrap: "wrap",
-          }}
-        >
+        <div className="flex gap-[3rem]">
           <input
             type="text"
             placeholder="Buscar juego por nombre..."
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            style={{ flex: 1, minWidth: "200px" }}
+            style={{ flex: 1, minWidth: "200px", maxWidth: "400px" }}
+            className="min-w-[200px] max-w-[400px] border border-[2px] border-[#32CD32] rounded-md p-2 focus:ring-[#32CD32]"
           />
 
           {/* Select para Género */}
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
+            className="bg-[#32CD32] p-1"
           >
             <option value="">Todos los géneros</option>
             {categories.map((cat) => (
@@ -111,19 +106,19 @@ export default function Home() {
             placeholder="Precio Mín."
             value={minPrice}
             onChange={(e) => setMinPrice(e.target.value)}
-            style={{ width: "100px" }}
+            className="w-[120px] border border-[2px] border-[#32CD32] rounded-md p-2 focus:ring-[#32CD32]"
           />
           <input
             type="number"
             placeholder="Precio Máx."
             value={maxPrice}
             onChange={(e) => setMaxPrice(e.target.value)}
-            style={{ width: "100px" }}
+            className="w-[120px] border border-[2px] border-[#32CD32] rounded-md p-2 focus:ring-[#32CD32]"
           />
         </div>
       </form>
 
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem" }}>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "3rem" }}>
         {filteredGames.length > 0 ? (
           filteredGames.map((g) => <GameCard key={g.id} game={g} />)
         ) : (

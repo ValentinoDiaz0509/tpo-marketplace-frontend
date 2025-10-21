@@ -28,15 +28,15 @@ const AdminCreateCategory = () => {
   };
 
   return (
-    <div
-      style={{ maxWidth: "400px", margin: "0 auto", backgroundColor: "gray" }}
-    >
-      <h2>Crear nueva categoría</h2>
+    <div className="max-w-lg mx-auto mt-8 p-6 bg-[#222222] rounded-2xl shadow-lg mb-[3rem]">
+      <h2 className="text-2xl font-bold mb-6 text-center">
+        Crear nueva categoría
+      </h2>
       <form onSubmit={handleSubmit}>
         <div>
-          <label>Nombre:</label>
+          <label className="block font-medium mb-1">Nombre:</label>
           <input
-            style={{ border: "1px solid white" }}
+            className="w-full border rounded-lg p-2"
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -44,7 +44,10 @@ const AdminCreateCategory = () => {
           />
         </div>
 
-        <button type="submit" style={{ marginTop: "15px" }}>
+        <button
+          type="submit"
+          className="w-full bg-[#32CD32] text-white py-2 rounded-lg hover:bg-blue-700 transition mt-[20px]"
+        >
           Crear categoría
         </button>
       </form>

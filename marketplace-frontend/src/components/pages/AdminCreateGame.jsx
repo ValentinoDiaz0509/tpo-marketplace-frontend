@@ -28,7 +28,7 @@ export default function AdminCreateGame() {
 
   const handleChange = (e) => {
     const name = e.target.name;
-    if (name === 'categoriesIds') {
+    if (name === "categoriesIds") {
       // multi-select: obtener todos los options seleccionados
       const selected = e.target.selectedOptions;
       const values = Array.from(selected).map((opt) => parseInt(opt.value, 10));
@@ -63,18 +63,20 @@ export default function AdminCreateGame() {
       // If an image file was selected, upload as multipart to the backend endpoint
       if (imageFile) {
         const formData = new FormData();
-        formData.append('title', form.title);
-        formData.append('price', form.price);
-  formData.append('discount', form.discount || 0);
-        formData.append('stock', form.stock);
-        formData.append('platform', form.platform);
+        formData.append("title", form.title);
+        formData.append("price", form.price);
+        formData.append("discount", form.discount || 0);
+        formData.append("stock", form.stock);
+        formData.append("platform", form.platform);
         // append categoriesIds as multiple fields
-        (form.categoriesIds || []).forEach((id) => formData.append('categoriesIds', id));
-        formData.append('imagen', imageFile);
+        (form.categoriesIds || []).forEach((id) =>
+          formData.append("categoriesIds", id)
+        );
+        formData.append("imagen", imageFile);
 
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem("token");
         const res = await fetch(`${API_URL}/games/admin/create-with-image`, {
-          method: 'POST',
+          method: "POST",
           body: formData,
           headers: token ? { Authorization: `Bearer ${token}` } : {},
         });
@@ -82,7 +84,10 @@ export default function AdminCreateGame() {
         if (!res.ok) throw new Error(`Error ${res.status}`);
         created = await res.json();
       } else {
-        created = await fetchData('/games/admin/create', { method: 'POST', body: JSON.stringify(form) });
+        created = await fetchData("/games/admin/create", {
+          method: "POST",
+          body: JSON.stringify(form),
+        });
       }
       // Si el backend devuelve el objeto creado, asumimos éxito
       if (created) {
@@ -94,8 +99,8 @@ export default function AdminCreateGame() {
   };
 
   return (
-    <div className="max-w-lg mx-auto mt-8 p-6 bg-[grey] rounded-2xl shadow-lg">
-      <h2 className="text-2xl font-bold mb-6 text-center text-blue-700">
+    <div className="max-w-lg mx-auto mt-8 p-6 bg-[#222222] rounded-2xl shadow-lg mb-[3rem]">
+      <h2 className="text-2xl font-bold mb-6 text-center">
         Crear Nuevo Videojuego
       </h2>
 
@@ -125,10 +130,10 @@ export default function AdminCreateGame() {
         </div>
 
         <div>
-          <label>Descuento:</label>
+          <label className="block font-medium mb-1">Descuento</label>
           <input
             name="discount"
-            style={{ border: "1px solid white" }}
+            className="w-full border rounded-lg p-2"
             type="number"
             step="0.01"
             onChange={handleChange}
@@ -197,16 +202,28 @@ export default function AdminCreateGame() {
           </div>
 
           {preview && (
-            <img src={preview} alt="Preview" className="mt-3 w-48 h-48 object-cover rounded-lg" />
+            <img
+              src={preview}
+              alt="Preview"
+              className="mt-3 w-48 h-48 object-cover rounded-lg"
+            />
           )}
           {form.imageUrl && !preview && (
-            <img src={form.imageUrl.startsWith('http') ? encodeURI(form.imageUrl) : encodeURI(`http://localhost:4002${form.imageUrl}`)} alt="Preview URL" className="mt-3 w-48 h-48 object-cover rounded-lg" />
+            <img
+              src={
+                form.imageUrl.startsWith("http")
+                  ? encodeURI(form.imageUrl)
+                  : encodeURI(`http://localhost:4002${form.imageUrl}`)
+              }
+              alt="Preview URL"
+              className="mt-3 w-48 h-48 object-cover rounded-lg"
+            />
           )}
         </div>
 
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
+          className="w-full bg-[#32CD32] text-white py-2 rounded-lg hover:bg-blue-700 transition"
         >
           Crear Videojuego
         </button>

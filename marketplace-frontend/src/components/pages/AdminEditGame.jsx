@@ -84,7 +84,9 @@ const AdminEditGame = () => {
             method: "PUT",
             body: formData,
             headers: {
-              ...(localStorage.getItem('token') ? { Authorization: `Bearer ${localStorage.getItem('token')}` } : {}),
+              ...(localStorage.getItem("token")
+                ? { Authorization: `Bearer ${localStorage.getItem("token")}` }
+                : {}),
             },
           }
         );
@@ -106,15 +108,13 @@ const AdminEditGame = () => {
   };
 
   return (
-    <div
-      style={{ maxWidth: "500px", margin: "0 auto", backgroundColor: "Gray" }}
-    >
-      <h2>Editar videojuego</h2>
-      <form onSubmit={handleSubmit}>
+    <div className="max-w-lg mx-auto mt-8 p-6 bg-[#222222] rounded-2xl shadow-lg mb-[3rem]">
+      <h2 className="text-2xl font-bold mb-6 text-center">Editar videojuego</h2>
+      <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label>Título:</label>
+          <label className="block font-medium mb-1">Título:</label>
           <input
-            style={{ border: "1px solid white" }}
+            className="w-full border rounded-lg p-2"
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
@@ -123,9 +123,9 @@ const AdminEditGame = () => {
         </div>
 
         <div>
-          <label>Precio:</label>
+          <label className="block font-medium mb-1">Precio:</label>
           <input
-            style={{ border: "1px solid white" }}
+            className="w-full border rounded-lg p-2"
             type="number"
             step="0.01"
             value={price}
@@ -135,9 +135,9 @@ const AdminEditGame = () => {
         </div>
 
         <div>
-          <label>Descuento:</label>
+          <label className="block font-medium mb-1">Descuento:</label>
           <input
-            style={{ border: "1px solid white" }}
+            className="w-full border rounded-lg p-2"
             type="number"
             step="0.01"
             value={discount}
@@ -147,9 +147,9 @@ const AdminEditGame = () => {
         </div>
 
         <div>
-          <label>Stock:</label>
+          <label className="block font-medium mb-1">Stock:</label>
           <input
-            style={{ border: "1px solid white" }}
+            className="w-full border rounded-lg p-2"
             type="number"
             value={stock}
             onChange={(e) => setStock(e.target.value)}
@@ -158,9 +158,9 @@ const AdminEditGame = () => {
         </div>
 
         <div>
-          <label>Plataforma:</label>
+          <label className="block font-medium mb-1">Plataforma:</label>
           <input
-            style={{ border: "1px solid white" }}
+            className="w-full border rounded-lg p-2"
             type="text"
             value={platform}
             onChange={(e) => setPlatform(e.target.value)}
@@ -169,30 +169,32 @@ const AdminEditGame = () => {
         </div>
 
         <div>
-          <label>Categorías:</label>
-            <select
-              style={{ border: "1px solid white" }}
-              multiple
-              size={Math.min(6, categories.length || 3)}
-              value={selectedCategories}
-              onChange={(e) => {
-                const values = Array.from(e.target.selectedOptions).map((o) => o.value);
-                setSelectedCategories(values);
-              }}
-              required
-            >
-              {categories.map((cat) => (
-                <option key={cat.id} value={String(cat.id)}>
-                  {cat.name}
-                </option>
-              ))}
-            </select>
+          <label className="block font-medium mb-1">Categorías:</label>
+          <select
+            className="w-full border rounded-lg p-2"
+            multiple
+            size={Math.min(6, categories.length || 3)}
+            value={selectedCategories}
+            onChange={(e) => {
+              const values = Array.from(e.target.selectedOptions).map(
+                (o) => o.value
+              );
+              setSelectedCategories(values);
+            }}
+            required
+          >
+            {categories.map((cat) => (
+              <option key={cat.id} value={String(cat.id)}>
+                {cat.name}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div>
-          <label>Imagen (opcional):</label>
+          <label className="block font-medium mb-1">Imagen (opcional):</label>
           <input
-            style={{ border: "1px solid white" }}
+            className="w-full border rounded-lg p-2"
             type="file"
             accept="image/*"
             onChange={handleImageChange}
@@ -210,14 +212,21 @@ const AdminEditGame = () => {
         ) : existingImage ? (
           <div style={{ marginTop: "10px" }}>
             <img
-              src={existingImage && existingImage.startsWith("http") ? existingImage : `http://localhost:4002${existingImage}`}
+              src={
+                existingImage && existingImage.startsWith("http")
+                  ? existingImage
+                  : `http://localhost:4002${existingImage}`
+              }
               alt="Imagen actual"
               style={{ width: "100%", borderRadius: "10px" }}
             />
           </div>
         ) : null}
 
-        <button type="submit" style={{ marginTop: "15px" }}>
+        <button
+          type="submit"
+          className="w-full bg-[#32CD32] text-white py-2 rounded-lg hover:bg-blue-700 transition"
+        >
           Guardar cambios
         </button>
       </form>

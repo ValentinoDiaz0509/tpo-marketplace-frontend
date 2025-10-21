@@ -3,7 +3,7 @@ import { fetchData } from "../../utils/api";
 import { AuthContext } from "../../context/AuthContext";
 
 export default function Profile() {
-  const { logout } = useContext(AuthContext);
+  const { logout, login } = useContext(AuthContext);
 
   const [form, setForm] = useState({
     email: "",
@@ -26,12 +26,22 @@ export default function Profile() {
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
-      await fetchData("/api/v1/users/me", {
+      const res = await fetchData("/api/v1/users/me", {
         method: "PUT",
         body: JSON.stringify(form),
       });
-      alert("Perfil actualizado");
-      logout();
+
+      // If backend returned an auth token (password was changed), log the user in with the new token
+      if (res && res.access_token) {
+        login(res.access_token);
+        alert("Perfil actualizado. Se generó un nuevo token y se mantuvo la sesión.");
+      } else {
+        // 204 No Content — profile updated but no re-auth required
+        alert("Perfil actualizado");
+      }
+
+      // Clear sensitive field
+      setForm((prev) => ({ ...prev, password: "" }));
     } catch (e) {
       alert(e.message);
     }

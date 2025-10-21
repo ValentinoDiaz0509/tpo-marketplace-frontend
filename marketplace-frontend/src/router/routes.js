@@ -14,6 +14,7 @@ import AdminEditGame from "../components/pages/AdminEditGame";
 import GameDetail from "../components/pages/GameDetail";
 import Orders from "../components/pages/Orders";
 import Wishlist from "../components/pages/Wishlist";
+import ForgotPassword from "../components/pages/ForgotPassword";
 
 export const routes = [
   {
@@ -53,11 +54,17 @@ export const routes = [
     Element: Orders,
     requiredRole: "USER",
   },
+  //{
+    //id: "wishlist",
+    //path: "/wishlist",
+   // Element: Wishlist,
+   // requiredRole: "USER", // La wishlist solo debe ser visible para usuarios logueados
+ // },
   {
-    id: "wishlist",
-    path: "/wishlist",
-    Element: Wishlist,
-    requiredRole: "USER", // La wishlist solo debe ser visible para usuarios logueados
+    id: "forgot-password",
+    path: "/forgot-password",
+    Element: ForgotPassword,
+    requiredRole: null,
   },
   {
     id: "admin",

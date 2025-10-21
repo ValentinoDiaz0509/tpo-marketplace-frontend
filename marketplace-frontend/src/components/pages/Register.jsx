@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { fetchData } from "../../utils/api";
 import { useNavigate } from "react-router-dom";
+import { toast } from 'react-toastify'; // 1. Importar toast
 
 export default function Register() {
   const [form, setForm] = useState({
@@ -22,10 +23,15 @@ export default function Register() {
         method: "POST",
         body: JSON.stringify(form),
       });
-      alert("Registro exitoso");
-      navigate("/");
-    } catch {
-      alert("Error al registrar");
+      
+      // 2. Notificación de éxito
+      toast.success("¡Registro exitoso! Ahora podés iniciar sesión.");
+      
+      navigate("/login"); // Redirigimos al login para que el usuario ingrese
+    } catch (err) {
+      console.error("Error en el registro:", err);
+      // 3. Notificación de error
+      toast.error("Error al registrar. Es posible que el email ya esté en uso.");
     }
   };
 

@@ -95,9 +95,21 @@ export default function Home() {
             <option value="">Todos los géneros</option>
             <option value="ACCION">Acción</option>
             <option value="AVENTURA">Aventura</option>
-            <option value="RPG">RPG</option>
+            <option value="Rol (RPG)">RPG</option>
             <option value="DEPORTES">Deportes</option>
             <option value="ESTRATEGIA">Estrategia</option>
+            <option value="SIMULACION">Simulación</option>
+            <option value="DEPORTES">Deportes</option>
+            <option value="CARRERAS">Carreras</option>
+            <option value="LUCHA">Lucha</option>
+            <option value="SHOOTER (FPS)">Shooter (FPS)</option>
+            <option value="PLATAFORMAS">Plataformas</option>
+            <option value="TERROR">Terror</option>
+            <option value="PUZZLE">Puzzle</option>
+            <option value="SANDBOX">Sandbox</option>
+            <option value="SURVIVAL">Survival</option>
+            <option value="BATTLE_ROYALE">Battle Royale</option>
+            <option value="INDIE">Indie</option>
           </select>
 
           {/* 2. Filtro de Rango de Precio */}

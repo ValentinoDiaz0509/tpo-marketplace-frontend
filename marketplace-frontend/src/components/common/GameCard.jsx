@@ -1,13 +1,16 @@
-import { Link } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode';
-import { fetchData } from '../../utils/api'; // Asegúrate de que esta ruta sea correcta
+import { Link } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
+import { fetchData } from "../../utils/api"; // Asegúrate de que esta ruta sea correcta
 
 export default function GameCard({ game }) {
   // Verifica si el juego tiene un descuento válido
   const hasDiscount = game.discount && game.discount > 0;
 
   return (
-    <Link to={`/detail/${game.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+    <Link
+      to={`/detail/${game.id}`}
+      style={{ textDecoration: "none", color: "inherit" }}
+    >
       <div
         style={{
           border: "1px solid #ccc",
@@ -66,43 +69,51 @@ export default function GameCard({ game }) {
           )}
         </div>
 
-        <div style={{ marginTop: 8, display: 'flex', gap: 8 }}>
+        <div style={{ marginTop: 8, display: "flex", gap: 8 }}>
           <button
             onClick={async (e) => {
               e.preventDefault();
               e.stopPropagation();
 
-              let wishlistId = localStorage.getItem('wishlistId');
-              const token = localStorage.getItem('token');
+              let wishlistId = localStorage.getItem("wishlistId");
+              const token = localStorage.getItem("token");
               if (!wishlistId && token) {
                 try {
                   const payload = jwtDecode(token);
                   // En muchos tokens, el ID del usuario está en 'id' o 'sub'
-                  wishlistId = payload.id || payload.sub;
-                  if (wishlistId) localStorage.setItem('wishlistId', wishlistId);
+                  wishlistId = payload.userId;
+                  if (wishlistId)
+                    localStorage.setItem("wishlistId", wishlistId);
                 } catch (err) {
-                  console.error('Error decodificando token', err);
+                  console.error("Error decodificando token", err);
                 }
               }
 
               if (!wishlistId) {
-                const input = window.prompt('No se pudo determinar tu ID de wishlist. Por favor, pégalo aquí o cancela:');
+                const input = window.prompt(
+                  "No se pudo determinar tu ID de wishlist. Por favor, pégalo aquí o cancela:"
+                );
                 if (!input) return;
                 wishlistId = input.trim();
-                localStorage.setItem('wishlistId', wishlistId);
+                localStorage.setItem("wishlistId", wishlistId);
               }
 
               try {
                 // Se usan backticks (`) para insertar la variable
-                await fetchData(`/wishlist/${wishlistId}/add`, { method: 'PUT', body: JSON.stringify({ gameId: game.id }) });
-                alert('Juego agregado a la wishlist');
+                await fetchData(`/wishlist/${wishlistId}/add`, {
+                  method: "PUT",
+                  body: JSON.stringify({ gameId: game.id }),
+                });
+                alert("Juego agregado a la wishlist");
               } catch (err) {
-                console.error('Error agregando a wishlist', err);
-                alert('No se pudo agregar a la wishlist. Revisa la consola para más detalles.');
+                console.error("Error agregando a wishlist", err);
+                alert(
+                  "No se pudo agregar a la wishlist. Revisa la consola para más detalles."
+                );
               }
             }}
             className="bg-yellow-400 text-black px-3 py-1 rounded"
-            style={{ cursor: 'pointer', width: '100%' }}
+            style={{ cursor: "pointer", width: "100%" }}
           >
             Añadir a wishlist
           </button>

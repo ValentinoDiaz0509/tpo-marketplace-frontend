@@ -12,4 +12,16 @@ const getRole = (token) => {
   }
 };
 
-export { getRole };
+const getUserId = (token) => {
+  if (token) {
+    try {
+      const payload = jwtDecode(token);
+      const userId = payload.userId;
+      return userId;
+    } catch {
+      console.error("El token es inválido o expiró, no se pudo decodificar.");
+    }
+  }
+};
+
+export { getRole, getUserId };

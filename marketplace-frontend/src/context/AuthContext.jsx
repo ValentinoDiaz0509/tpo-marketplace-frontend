@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect } from "react";
-import { getRole } from "../utils/decodeJwt";
+import { getRole, getUserId } from "../utils/decodeJwt";
 
 export const AuthContext = createContext();
 
@@ -8,6 +8,7 @@ export function AuthProvider({ children }) {
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
   const [role, setRole] = useState(null);
+  const [userId, setUserId] = useState(null);
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
@@ -16,14 +17,16 @@ export function AuthProvider({ children }) {
     if (storedToken /* && storedUser */) {
       setToken(storedToken);
       setRole(getRole(storedToken));
+      setUserId(getUserId(storedToken));
       /* setUser(JSON.parse(storedUser)); */
     }
     setLoading(false);
   }, []);
 
-  const login = (newToken, userData) => {
+  const login = (newToken) => {
     setToken(newToken);
     setRole(getRole(newToken));
+    setUserId(getUserId(newToken));
     /* setUser(userData); */
     localStorage.setItem("token", newToken);
     /* localStorage.setItem("user", JSON.stringify(userData)); */
@@ -32,6 +35,7 @@ export function AuthProvider({ children }) {
   const logout = () => {
     setToken(null);
     setRole(null);
+    setUserId(null);
     /* setUser(null); */
     localStorage.removeItem("token");
     /* localStorage.removeItem("user"); */
@@ -40,7 +44,7 @@ export function AuthProvider({ children }) {
   const value = {
     token,
     role,
-    /* user, */
+    userId,
     loading,
     login,
     logout,

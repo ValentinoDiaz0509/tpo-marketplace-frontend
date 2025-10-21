@@ -1,6 +1,4 @@
 import Home from "../components/pages/Home";
-import Login from "../components/pages/Login";
-import Register from "../components/pages/Register";
 import Profile from "../components/pages/Profile";
 import AdminDashboard from "../components/pages/AdminDashboard";
 import AdminLayout from "../components/layout/AdminLayout";
@@ -22,18 +20,8 @@ export const routes = [
     Element: Home,
     requiredRole: "USER",
   },
-  {
-    id: "login",
-    path: "/login",
-    Element: Login,
-    requiredRole: null,
-  },
-  {
-    id: "register",
-    path: "/register",
-    Element: Register,
-    requiredRole: null,
-  },
+  // The /login route has been moved to AppRouter.jsx
+  // The /register route has been moved to AppRouter.jsx
   {
     id: "userProfile",
     path: "/userProfile",
@@ -46,7 +34,6 @@ export const routes = [
     Element: GameDetail,
     requiredRole: null,
   },
-  // 👇 2. RUTA AÑADIDA
   {
     id: "orders",
     path: "/orders",
@@ -57,7 +44,13 @@ export const routes = [
     id: "wishlist",
     path: "/wishlist",
     Element: Wishlist,
-    requiredRole: "USER", // La wishlist solo debe ser visible para usuarios logueados
+    requiredRole: "USER",
+  },
+  {
+    id: "orders",
+    path: "/orders",
+    Element: Orders,
+    requiredRole: "USER",
   },
   {
     id: "admin",

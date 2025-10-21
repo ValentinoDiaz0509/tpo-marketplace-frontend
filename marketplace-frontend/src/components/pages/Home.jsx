@@ -10,6 +10,7 @@ export default function Home() {
   const [minPrice, setMinPrice] = useState(""); // Nuevo: Precio Mínimo
   const [maxPrice, setMaxPrice] = useState(""); // Nuevo: Precio Máximo
   const [title, setTitle] = useState("");
+  const [categories, setCategories] = useState([]);
 
   // Carga inicial de todos los juegos.
   useEffect(() => {
@@ -18,6 +19,12 @@ export default function Home() {
         setGames(data);
       })
       .catch(() => alert("Error al cargar juegos"));
+
+    fetchData("/categories")
+      .then((data) => {
+        setCategories(data.content);
+      })
+      .catch(() => alert("Error al cargar categorías"));
   }, []);
 
   // Función de Filtrado y Ordenamiento usando useMemo
@@ -93,11 +100,9 @@ export default function Home() {
             onChange={(e) => setCategory(e.target.value)}
           >
             <option value="">Todos los géneros</option>
-            <option value="ACCION">Acción</option>
-            <option value="AVENTURA">Aventura</option>
-            <option value="RPG">RPG</option>
-            <option value="DEPORTES">Deportes</option>
-            <option value="ESTRATEGIA">Estrategia</option>
+            {categories.map((cat) => (
+              <option value={cat.name}>{cat.name}</option>
+            ))}
           </select>
 
           {/* 2. Filtro de Rango de Precio */}

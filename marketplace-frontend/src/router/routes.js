@@ -14,6 +14,7 @@ import AdminEditGame from "../components/pages/AdminEditGame";
 import GameDetail from "../components/pages/GameDetail";
 import Orders from "../components/pages/Orders";
 import Wishlist from "../components/pages/Wishlist";
+import ForgotPassword from "../components/pages/ForgotPassword";
 
 export const routes = [
   {
@@ -26,6 +27,12 @@ export const routes = [
     id: "login",
     path: "/login",
     Element: Login,
+    requiredRole: null,
+  },
+  {
+    id: "forgot-password",
+    path: "/forgot-password",
+    Element: ForgotPassword,
     requiredRole: null,
   },
   {

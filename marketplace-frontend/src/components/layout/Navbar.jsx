@@ -12,13 +12,9 @@ export default function Navbar() {
         <nav className="hidden md:flex items-center gap-6">
           {token ? (
             <>
-              {role && role == "USER" && (
-              <Link to="/">Catálogo</Link>
-              )}
-              {role && role == "USER" && (
-              <Link to="/wishlist">Wishlist</Link>
-              )}
-              
+              {role && role == "USER" && <Link to="/">Catálogo</Link>}
+              {role && role == "USER" && <Link to="/wishlist">Wishlist</Link>}
+
               <Link to="/userProfile">Mi perfil</Link>
               {role && role == "ADMIN" && (
                 <Link to="/admin/dashboard">Admin</Link>

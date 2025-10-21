@@ -2,7 +2,8 @@ import { useState, useContext } from "react";
 import { fetchData } from "../../utils/api";
 import { AuthContext } from "../../context/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
-import { jwtDecode } from "jwt-decode"; // No te olvides de importar esto
+import { jwtDecode } from "jwt-decode";
+import { toast } from 'react-toastify'; // 1. Importar toast
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -22,24 +23,26 @@ export default function Login() {
         const token = res.access_token;
         login(token); // Guarda el token en el contexto
 
-        // --- LÓGICA DE REDIRECCIÓN POR ROL ---
-        // 1. Decodifica el token para obtener los datos del usuario
         const decodedToken = jwtDecode(token);
-        const userRole = decodedToken.role; // Asumo que el rol está en el campo 'role'
+        const userRole = decodedToken.role;
 
-        // 2. Comprueba el rol y redirige a la ruta correspondiente
+        // 2. Notificación de éxito
+        toast.success(`¡Bienvenido, ${decodedToken.sub}!`);
+
         if (userRole === 'ADMIN') {
-          navigate("/admin/dashboard"); // Si es ADMIN, va al dashboard de admin
+          navigate("/admin/dashboard");
         } else {
-          navigate("/"); // Si es cualquier otro rol, va a la página principal
+          navigate("/");
         }
 
       } else {
-        alert("La respuesta del servidor no es válida.");
+        // 3. Notificación de advertencia (en lugar del alert)
+        toast.warn("La respuesta del servidor no es válida.");
       }
     } catch (err) {
-      console.error("Error de login:", err)
-      alert("Credenciales incorrectas");
+      console.error("Error de login:", err);
+      // 4. Notificación de error (en lugar del alert)
+      toast.error("Credenciales incorrectas");
     }
   };
 

@@ -1,53 +1,69 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { fetchData } from '../../utils/api';
+// 1. Importar toast
+import { toast } from 'react-toastify'; 
 
 export default function GameDetail(){
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const [game, setGame] = useState(null);
-  const [quantity, setQuantity] = useState(1);
-  const [loading, setLoading] = useState(true);
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [game, setGame] = useState(null);
+  const [quantity, setQuantity] = useState(1);
+  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    // 👇 CORRECCIÓN DE SINTAXIS AQUÍ
-    fetchData(`/games/get/${id}`)
-      .then(g => setGame(g))
-      .catch(() => alert('No se pudo cargar el juego'))
-      .finally(() => setLoading(false));
-  }, [id]);
+  useEffect(() => {
+    // ... (Lógica de carga del juego)
+    fetchData(`/games/get/${id}`)
+      .then(g => setGame(g))
+      .catch(() => toast.error('No se pudo cargar la información del juego')) // ⬅️ Toast para error de carga inicial
+      .finally(() => setLoading(false));
+  }, [id]);
 
-  const handleBuy = async (e) => {
-    e.preventDefault();
-    // Require authentication: backend only allows authenticated users to create orders
-    const token = localStorage.getItem('token');
-    if (!token) {
-      // navigate to login so user can authenticate
-      alert('Debes iniciar sesión para completar la compra. Serás redirigido al login.');
-      navigate('/login');
-      return;
-    }
+  const handleBuy = async (e) => {
+    e.preventDefault();
+    const token = localStorage.getItem('token');
 
-    // Juegos virtuales: no se requiere dirección. Enviar cadena vacía para cumplir el contrato backend.
-    const payload = { address: "", itemList: [{ gameId: Number(id), quantity: Number(quantity) }] };
-    console.log('Order payload:', payload);
-    try{
-      const res = await fetchData('/order', { method: 'POST', body: JSON.stringify(payload) });
-      alert('Pedido creado correctamente. ID: ' + (res.id || 'n/a'));
-      navigate('/orders');
-    }catch(err){
-      console.error(err);
-      // If backend returns 403, likely the token is invalid/expired or user lacks permissions
-      if (err.message && err.message.includes('403')) {
-        alert('No autorizado. Por favor inicia sesión nuevamente.');
-        // Remove possibly invalid token and redirect to login
-        localStorage.removeItem('token');
-        navigate('/login');
-        return;
-      }
-      alert('Error al crear el pedido: ' + (err.message || err));
-    }
-  }
+    if (!token) {
+      // Reemplazamos el alert por toast.warn o toast.error
+      toast.warn('Debes iniciar sesión para completar la compra. Redirigiendo...'); 
+      // Dejamos el navigate
+      navigate('/login');
+      return;
+    }
+
+    const payload = { address: "", itemList: [{ gameId: Number(id), quantity: Number(quantity) }] };
+    console.log('Order payload:', payload);
+
+    try{
+      const res = await fetchData('/order', { 
+        method: 'POST', 
+        body: JSON.stringify(payload),
+        // Asegúrate de que fetchData adjunta el token al header Authorization
+      });
+
+      // ⭐️ ÉXITO: Reemplazamos el alert por toast.success
+      toast.success("Compra realizada con éxito");
+      // Opcional: podrías sumar el ID al mensaje si es útil
+      // toast.success(`Pedido creado correctamente. ID: ${res.id || 'n/a'}`);
+      
+      navigate('/orders');
+
+    }catch(err){
+      console.error(err);
+
+      // Manejo de error 403 (Token inválido/expirado)
+      if (err.message && err.message.includes('403')) {
+        // ⭐️ ERROR 403: Reemplazamos el alert por toast.error
+        toast.error('Sesión expirada o no autorizada. Por favor inicia sesión nuevamente.');
+        localStorage.removeItem('token');
+        navigate('/login');
+        return;
+      }
+
+      // ⭐️ ERROR GENERAL: Reemplazamos el alert por toast.error
+      toast.error("Error al procesar la compra");
+    }
+  }
   if(loading) return <p>Cargando...</p>;
   if(!game) return <p>Juego no encontrado</p>;
 
@@ -78,3 +94,4 @@ export default function GameDetail(){
     </div>
   )
 }
+

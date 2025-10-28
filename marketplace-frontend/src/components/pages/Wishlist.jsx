@@ -2,6 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import { fetchData } from "../../utils/api";
 import { AuthContext } from "../../context/AuthContext";
 import GameCard from "../common/GameCard";
+import { toast } from "react-toastify";
 
 export default function Wishlist() {
   const [wishlist, setWishlist] = useState([]);
@@ -15,19 +16,15 @@ export default function Wishlist() {
         setWishlist(data.gameList);
         setLoading(false);
       })
-      .catch(() => alert("Error al cargar wishlist"));
+    .catch(() => toast.error("Error al cargar tu lista de deseos."));
   }, [userId]);
 
   const handleRemoveItem = async (gameId) => {
     setLoading(true);
-    if (
-      !wishlist ||
-      !window.confirm(
-        "¿Estás seguro de que quieres eliminar este juego de tu lista de deseos?"
-      )
-    ) {
-      return;
-    }
+    if (!wishlist) {
+        setLoading(false);
+        return;
+    }
     try {
       await fetchData(`/wishlist/${userId}/delete`, {
         method: "PUT",
@@ -37,14 +34,15 @@ export default function Wishlist() {
         currentWishlist.filter((game) => game.id !== gameId)
       );
 
-      alert("Juego eliminado de tu lista de deseos.");
-    } catch (err) {
-      console.error("Error al eliminar el juego:", err);
-      alert("No se pudo eliminar el juego. Inténtalo de nuevo.");
-    } finally {
-      setLoading(false);
-    }
-  };
+    toast.success("Juego eliminado de tu lista de deseos.");
+    } catch (err) {
+      console.error("Error al eliminar el juego:", err);
+      // 4. REEMPLAZO: alert("No se pudo eliminar...") -> toast.error(...)
+      toast.error("No se pudo eliminar el juego. Inténtalo de nuevo.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (loading) return <p>Cargando tu lista de deseos...</p>;
   if (error) return <p>{error}</p>;

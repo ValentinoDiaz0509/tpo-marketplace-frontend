@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 // Asumo que tu archivo api está en una ruta como esta, ajústala si es necesario
 import { fetchData } from "../../utils/api";
+import { toast } from "react-toastify";
 
 export default function Orders() {
   const [orders, setOrders] = useState([]);
@@ -10,7 +11,7 @@ export default function Orders() {
   useEffect(() => {
     fetchData("/order/me")
       .then(setOrders)
-      .catch(() => alert("Error al cargar pedidos"));
+      .catch(() => toast.error("Error al cargar tus pedidos."));
   }, []);
 
   return (

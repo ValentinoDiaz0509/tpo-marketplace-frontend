@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { fetchData } from '../../utils/api';
+import { toast } from "react-toastify";
 
 export default function PaymentForm(){
   const { gameId } = useParams();
@@ -17,7 +18,7 @@ export default function PaymentForm(){
     // If no auth token, redirect to login
     const token = localStorage.getItem('token');
     if (!token) {
-      alert('Debes iniciar sesión para continuar con el pago.');
+     toast.error('Debes iniciar sesión para continuar con el pago.');
       navigate('/login');
     }
   }, [navigate]);
@@ -30,16 +31,18 @@ export default function PaymentForm(){
     const payload = { address: "", itemList: [{ gameId: Number(gameId), quantity: Number(quantity) }] };
     try{
       const res = await fetchData('/order', { method: 'POST', body: JSON.stringify(payload) });
-      alert('Compra realizada con éxito. ID de pedido: ' + (res.id || 'n/a'));
-      navigate('/orders');
-    }catch(err){
-      console.error('Error al procesar la compra:', err);
-      alert('No se pudo completar la compra: ' + (err.message || err));
-    }finally{
-      setLoading(false);
-    }
-  }
-
+     // 2. REEMPLAZO: alert('Compra realizada con éxito...') -> toast.success(...)
+      toast.success('Compra realizada con éxito. ID de pedido: ' + (res.id || 'n/a'));
+      navigate('/orders');
+    }catch(err){
+      console.error('Error al procesar la compra:', err);
+      
+      // 3. REEMPLAZO: alert('No se pudo completar la compra:...') -> toast.error(...)
+      toast.error('No se pudo completar la compra: ' + (err.message || 'Error desconocido.'));
+    }finally{
+      setLoading(false);
+    }
+  }
   return (
     <div className="max-w-xl mx-auto p-6">
       <h2 className="text-2xl font-bold mb-4">Formulario de pago</h2>

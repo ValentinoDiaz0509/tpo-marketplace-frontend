@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { fetchData } from "../../utils/api";
+import { toast } from "react-toastify";
 
 const AdminCreateCategory = () => {
   const [name, setName] = useState("");
@@ -19,13 +20,19 @@ const AdminCreateCategory = () => {
       });
 
       if (response.ok) {
-        alert("✅ Categoría creada exitosamente");
+        toast.success("✅ Categoría creada exitosamente");
         setName("");
-      }
-    } catch (error) {
-      console.error("Error al crear la categoría:", error.message);
-    }
-  };
+      } else {
+            // Manejo de error para respuestas HTTP no exitosas (ej. 409 Conflict)
+            const errorData = await response.json();
+            toast.error(`Error (${response.status}): ${errorData.message || 'No se pudo crear la categoría.'}`);
+     }
+    } catch (error) {
+      // 2. REEMPLAZO: console.error + sin alert -> toast.error(...)
+      console.error("Error al crear la categoría:", error.message);
+      toast.error("Error de red o conexión al crear la categoría.");
+    }
+  };
 
   return (
     <div className="max-w-lg mx-auto mt-8 p-6 bg-[#222222] rounded-2xl shadow-lg mb-[3rem]">

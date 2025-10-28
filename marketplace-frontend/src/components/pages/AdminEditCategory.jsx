@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { fetchData } from "../../utils/api";
+import { toast } from "react-toastify";
 
 const AdminEditCategory = () => {
   const { id } = useParams(); // obtiene el id desde la URL (ej: /edit-category/3)
@@ -11,7 +12,7 @@ const AdminEditCategory = () => {
       .then((data) => {
         setName(data.name);
       })
-      .catch(() => alert("Error al cargar categorías"));
+      .catch(() => toast.error("Error al cargar la categoría."));
   }, [id]);
 
   const handleSubmit = async (e) => {
@@ -29,10 +30,11 @@ const AdminEditCategory = () => {
       });
 
       if (response.ok) {
-        alert("✅ Categoría actualizada correctamente");
+        toast.success("✅ Categoría actualizada correctamente");
       }
     } catch (error) {
       console.error("Error al editar la categoría:", error.message);
+      toast.error("Error de red o conexión al intentar guardar la categoría.");
     }
   };
 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { fetchData, API_URL } from "../../utils/api";
+import { toast } from "react-toastify";
 
 export default function AdminCreateGame() {
   const [form, setForm] = useState({
@@ -23,7 +24,7 @@ export default function AdminCreateGame() {
       .then((data) => {
         setCategories(data.content);
       })
-      .catch(() => alert("Error al cargar categorías"));
+      .catch(() => toast.error("Error al cargar la lista de categorías."));
   }, []);
 
   const handleChange = (e) => {
@@ -91,10 +92,11 @@ export default function AdminCreateGame() {
       }
       // Si el backend devuelve el objeto creado, asumimos éxito
       if (created) {
-        alert("🎮 Videojuego creado con éxito");
+        toast.success("🎮 Videojuego creado con éxito");
       }
     } catch (error) {
       console.error("Error al enviar:", error.message);
+      toast.error("Error al crear el videojuego. Revisa la consola.");
     }
   };
 

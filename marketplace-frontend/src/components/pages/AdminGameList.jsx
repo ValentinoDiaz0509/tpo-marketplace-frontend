@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { fetchData } from "../../utils/api";
+import { toast } from "react-toastify";
 
 export default function AdminGameList() {
   const [games, setGames] = useState([]);
@@ -11,7 +12,7 @@ export default function AdminGameList() {
       .then((data) => {
         setGames(data);
       })
-      .catch(() => alert("Error al cargar juegos"));
+      .catch(() => toast.error("Error al cargar la lista de juegos."));
   }, []);
 
   const handleEdit = (id) => {
@@ -28,10 +29,10 @@ export default function AdminGameList() {
       // Si el backend devuelve algún status o body, asumimos éxito si no hay error
       // Actualizamos la UI para remover el juego eliminado
       setGames((prev) => prev.filter((g) => g.id !== id));
-      alert("Juego eliminado");
+      toast.success("Juego eliminado correctamente.");
     } catch (err) {
       console.error("Error borrando juego:", err);
-      alert("No se pudo eliminar el juego");
+      toast.error("No se pudo eliminar el juego.");
     }
   };
 

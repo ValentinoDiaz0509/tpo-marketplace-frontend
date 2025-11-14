@@ -95,7 +95,7 @@ export default function Profile() {
                 </span>
               </span>
               <input
-                id="email-input"
+                name="email"
                 className="flex-1 rounded-r-lg text-white bg-[#3c4922] border-none h-14 placeholder:text-[#b7cb90] p-3 focus:ring-2 focus:ring-[#32CD32]"
                 type="email"
                 value={form.email}
@@ -115,7 +115,7 @@ export default function Profile() {
               <span className="material-symbols-outlined">person</span>
             </span>
             <input
-              id="firstName-input"
+              name="firstName"
               className="flex-1 rounded-r-lg text-white bg-[#3c4922] border-none h-14 placeholder:text-[#b7cb90] p-3 focus:ring-2 focus:ring-[#32CD32]"
               value={form.firstName}
               onChange={handleChange}
@@ -133,7 +133,7 @@ export default function Profile() {
               <span className="material-symbols-outlined">person</span>
             </span>
             <input
-              id="lastName-input"
+              name="lastName"
               className="flex-1 rounded-r-lg text-white bg-[#3c4922] border-none h-14 placeholder:text-[#b7cb90] p-3 focus:ring-2 focus:ring-[#32CD32]"
               value={form.lastName}
               onChange={handleChange}
@@ -152,7 +152,7 @@ export default function Profile() {
                 <span className="material-symbols-outlined">lock</span>
               </span>
               <input
-                id="password-input"
+                name="password"
                 className="flex-1 rounded-r-lg text-white bg-[#3c4922] border-none h-14 placeholder:text-[#b7cb90] p-3 focus:ring-2 focus:ring-[#32CD32]"
                 placeholder="Contraseña"
                 type="password"

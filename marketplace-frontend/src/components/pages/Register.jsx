@@ -61,14 +61,27 @@ export default function Register() {
         <div className="flex flex-col gap-4">
           <label className="flex flex-col min-w-40 flex-1">
             <p className="text-white text-base font-medium leading-normal pb-2">
-              Nombre de Usuario
+              Nombre
             </p>
             <input
-              name="username"
+              name="firstName"
               onChange={handleChange}
-              value={form.username}
+              value={form.firstName}
               className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#32CD32] border-none bg-[#3c4922] h-14 placeholder:text-[#b7cb90] p-4 text-base font-normal leading-normal"
-              placeholder="Nombre de Usuario"
+              placeholder="Nombre"
+              required
+            />
+          </label>
+          <label className="flex flex-col min-w-40 flex-1">
+            <p className="text-white text-base font-medium leading-normal pb-2">
+              Nombre
+            </p>
+            <input
+              name="lastName"
+              onChange={handleChange}
+              value={form.lastName}
+              className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#32CD32] border-none bg-[#3c4922] h-14 placeholder:text-[#b7cb90] p-4 text-base font-normal leading-normal"
+              placeholder="Apellido"
               required
             />
           </label>
@@ -105,11 +118,11 @@ export default function Register() {
               Confirmar Contraseña
             </p>
             <input
-              name="confirmPassword"
+              name="passwordRepeat"
               onChange={handleChange}
-              value={form.confirmPassword}
+              value={form.passwordRepeat}
               className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#32CD32] border-none bg-[#3c4922] h-14 placeholder:text-[#b7cb90] p-4 text-base font-normal leading-normal"
-              placeholder="Confirmar Contraseña"
+              placeholder="Repetir Contraseña"
               type="password"
               required
             />

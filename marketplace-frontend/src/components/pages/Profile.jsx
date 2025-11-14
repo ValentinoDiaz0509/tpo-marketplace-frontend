@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { fetchData } from "../../utils/api";
 import { AuthContext } from "../../context/AuthContext";
+import { toast } from "react-toastify";
 
 export default function Profile() {
   const { logout, login } = useContext(AuthContext);
@@ -18,7 +19,7 @@ export default function Profile() {
       .then((data) => {
         setForm((prevForm) => ({ ...prevForm, ...data }));
       })
-      .catch(() => alert("Error al cargar datos del usuario"));
+      .catch(() => toast.error("Error al cargar los datos de tu perfil."));
 
     setLoading(false);
   }, []);
@@ -35,22 +36,25 @@ export default function Profile() {
       });
 
       // If backend returned an auth token (password was changed), log the user in with the new token
-      if (res && res.access_token) {
-        login(res.access_token);
-        alert(
-          "Perfil actualizado. Se generó un nuevo token y se mantuvo la sesión."
-        );
-      } else {
-        // 204 No Content — profile updated but no re-auth required
-        alert("Perfil actualizado");
-      }
+      if (res && res.access_token) {
+        login(res.access_token);
+        // 2. REEMPLAZO: alert("Perfil actualizado...") -> toast.success(...)
+        toast.success(
+          "Perfil actualizado. Se generó un nuevo token y se mantuvo la sesión."
+        );
+      } else {
+        // 204 No Content — profile updated but no re-auth required
+        // 3. REEMPLAZO: alert("Perfil actualizado") -> toast.success(...)
+        toast.success("Perfil actualizado correctamente.");
+      }
 
-      // Clear sensitive field
-      setForm((prev) => ({ ...prev, password: "" }));
-    } catch (e) {
-      alert(e.message);
-    }
-  };
+      // Clear sensitive field
+      setForm((prev) => ({ ...prev, password: "" }));
+    } catch (e) {
+      // 4. REEMPLAZO: alert(e.message) -> toast.error(...)
+      toast.error(`Error al actualizar: ${e.message}`);
+    }
+  };
 
   return (
     <div className="relative flex h-screen w-full flex-col items-center justify-center overflow-hidden font-display bg-[#121212]">

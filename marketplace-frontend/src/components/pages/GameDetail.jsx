@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { fetchData } from "../../utils/api";
+import { toast } from "react-toastify";
 
 export default function GameDetail() {
   const { id } = useParams();
@@ -13,7 +14,7 @@ export default function GameDetail() {
     // 👇 CORRECCIÓN DE SINTAXIS AQUÍ
     fetchData(`/games/get/${id}`)
       .then((g) => setGame(g))
-      .catch(() => alert("No se pudo cargar el juego"))
+      .catch(() => toast.error("No se pudo cargar la información del juego."))
       .finally(() => setLoading(false));
   }, [id]);
 
@@ -22,10 +23,8 @@ export default function GameDetail() {
     // Require authentication: backend only allows authenticated users to create orders
     const token = localStorage.getItem("token");
     if (!token) {
-      // navigate to login so user can authenticate
-      alert(
-        "Debes iniciar sesión para completar la compra. Serás redirigido al login."
-      );
+      // 2. REEMPLAZO: alert("Debes iniciar sesión...") -> toast.warn(...)
+      toast.warn("Debes iniciar sesión para completar la compra. Serás redirigido.");
       navigate("/login");
       return;
     }
@@ -41,19 +40,19 @@ export default function GameDetail() {
         method: "POST",
         body: JSON.stringify(payload),
       });
-      alert("Pedido creado correctamente. ID: " + (res.id || "n/a"));
+      toast.success("Pedido creado correctamente. ID: " + (res.id || "n/a"));
       navigate("/orders");
     } catch (err) {
       console.error(err);
       // If backend returns 403, likely the token is invalid/expired or user lacks permissions
       if (err.message && err.message.includes("403")) {
-        alert("No autorizado. Por favor inicia sesión nuevamente.");
+        toast.error("No autorizado. Por favor inicia sesión nuevamente.");
         // Remove possibly invalid token and redirect to login
         localStorage.removeItem("token");
         navigate("/login");
         return;
       }
-      alert("Error al crear el pedido: " + (err.message || err));
+      toast.error("Error al crear el pedido: " + (err.message || "Error desconocido"));
     }
   };
   if (loading) return <p>Cargando...</p>;

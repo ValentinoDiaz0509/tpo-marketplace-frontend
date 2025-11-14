@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { fetchData } from "../../utils/api";
+import { toast } from "react-toastify";
 
 export default function AdminUserList() {
   const [users, setUsers] = useState([]);
@@ -9,15 +10,15 @@ export default function AdminUserList() {
       .then((data) => {
         setUsers(data);
       })
-      .catch(() => alert("Error al cargar usuarios"));
+      .catch(() => toast.error("Error al cargar la lista de usuarios."));
   }, []);
 
   const handleMakeAdmin = async (user) => {
     const userId = user?.id;
     if (!userId) {
-      alert(
-        "No se puede cambiar el rol: el usuario no tiene id definido. Asegurate de que el backend esté devolviendo el campo id en /api/v1/admin/usuarios. Revisa la consola para más detalles."
-      );
+       toast.error(
+        "No se puede cambiar el rol: el usuario no tiene ID definido. Revisa la consola."
+      );
       console.error("Usuario sin id recibido desde backend:", user);
       return;
     }
@@ -35,10 +36,10 @@ export default function AdminUserList() {
       setUsers((prev) =>
         prev.map((u) => (u.id === userId ? { ...u, role: "ADMIN" } : u))
       );
-      alert("Rol actualizado a ADMIN");
-    } catch (err) {
+      toast.success("Rol actualizado a ADMIN correctamente.");
+    } catch (err) {
       console.error("Error cambiando rol:", err);
-      alert("No se pudo cambiar el rol");
+      toast.error("No se pudo cambiar el rol.");
     }
   };
 

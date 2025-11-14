@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { fetchData } from "../../utils/api";
+import { toast } from "react-toastify";
 
 const AdminEditGame = () => {
   const { id } = useParams(); // obtiene el id desde la URL (ej: /edit-game/5)
@@ -24,7 +25,7 @@ const AdminEditGame = () => {
       .then((data) => {
         setCategories(data.content);
       })
-      .catch(() => alert("Error al cargar categorías"));
+      .catch(() => toast.error("Error al cargar la lista de categorías."));
   }, []);
 
   // 🔹 Cargar datos del juego
@@ -41,8 +42,11 @@ const AdminEditGame = () => {
         setSelectedCategories((data.categories || []).map((c) => String(c.id)));
         setExistingImage(data.imageUrl);
       })
-      .catch((err) => console.error("Error al cargar el juego:", err));
-  }, [id]);
+      .catch((err) => {
+        console.error("Error al cargar el juego:", err);
+        toast.error("Error al cargar los datos del juego.");
+      });
+  }, [id]);
 
   // 🔹 Maneja la carga de imagen nueva
   const handleImageChange = (e) => {
@@ -100,12 +104,14 @@ const AdminEditGame = () => {
       }
 
       if (response.ok) {
-        alert("✅ Videojuego actualizado correctamente");
+        toast.success("✅ Videojuego actualizado correctamente");
       }
-    } catch (error) {
-      console.error("Error al editar el videojuego:", error.message);
-    }
-  };
+   } catch (error) {
+      console.error("Error al editar el videojuego:", error.message);
+      // 4. Manejo de error para el fetch/fetchData
+      toast.error("Error al editar el videojuego. Inténtalo de nuevo.");
+    }
+  };
 
   return (
     <div className="max-w-lg mx-auto mt-8 p-6 bg-[#222222] rounded-2xl shadow-lg mb-[3rem]">

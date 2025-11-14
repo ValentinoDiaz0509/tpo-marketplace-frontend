@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { fetchData } from "../../utils/api";
 import GameCard from "../common/GameCard";
+import { toast } from "react-toastify";
 
 export default function Home() {
   const [games, setGames] = useState([]);
@@ -18,13 +19,13 @@ export default function Home() {
       .then((data) => {
         setGames(data);
       })
-      .catch(() => alert("Error al cargar juegos"));
+      .catch(() => toast.error("Error al cargar la lista de juegos."));
 
     fetchData("/categories")
       .then((data) => {
         setCategories(data.content);
       })
-      .catch(() => alert("Error al cargar categorías"));
+      .catch(() => toast.error("Error al cargar las categorías."));
   }, []);
 
   // Función de Filtrado y Ordenamiento usando useMemo

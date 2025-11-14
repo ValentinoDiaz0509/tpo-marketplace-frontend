@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { fetchData } from "../../utils/api";
+import { toast } from "react-toastify";
 
 export default function AdminCategoryList() {
   const [categories, setCategories] = useState([]);
@@ -11,7 +12,7 @@ export default function AdminCategoryList() {
       .then((data) => {
         setCategories(data.content);
       })
-      .catch(() => alert("Error al cargar categorías"));
+      .catch(() => toast.error("Error al cargar la lista de categorías."));
   }, []);
 
   const handleEdit = (id) => {
@@ -25,10 +26,10 @@ export default function AdminCategoryList() {
     try {
       await fetchData(`/categories/${id}`, { method: "DELETE" });
       setCategories((prev) => prev.filter((c) => c.id !== id));
-      alert("Categoría eliminada");
+      toast.success("Categoría eliminada correctamente.");
     } catch (err) {
       console.error("Error borrando categoría:", err);
-      alert("No se pudo eliminar la categoría");
+      toast.error("No se pudo eliminar la categoría.");
     }
   };
 

@@ -1,52 +1,26 @@
-import { useState, useEffect, useContext } from "react";
-import { fetchData } from "../../utils/api";
-import { AuthContext } from "../../context/AuthContext";
+import { useEffect } from "react";
 import GameCard from "../common/GameCard";
-import { toast } from "react-toastify";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchWishlist, removeFromWishlist } from "../../redux/wishlistSlice";
 
 export default function Wishlist() {
-  const [wishlist, setWishlist] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const { userId } = useContext(AuthContext);
+  const { wishlistGames, loading, error } = useSelector(
+    (state) => state.wishlist
+  );
+  const userId = useSelector((state) => state.auth.userId);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    fetchData(`/wishlist/${userId}`)
-      .then((data) => {
-        setWishlist(data.gameList);
-        setLoading(false);
-      })
-    .catch(() => toast.error("Error al cargar tu lista de deseos."));
-  }, [userId]);
+    dispatch(fetchWishlist(userId));
+  }, [dispatch, userId]);
 
   const handleRemoveItem = async (gameId) => {
-    setLoading(true);
-    if (!wishlist) {
-        setLoading(false);
-        return;
-    }
-    try {
-      await fetchData(`/wishlist/${userId}/delete`, {
-        method: "PUT",
-        body: JSON.stringify({ gameId }),
-      });
-      setWishlist((currentWishlist) =>
-        currentWishlist.filter((game) => game.id !== gameId)
-      );
-
-    toast.success("Juego eliminado de tu lista de deseos.");
-    } catch (err) {
-      console.error("Error al eliminar el juego:", err);
-      // 4. REEMPLAZO: alert("No se pudo eliminar...") -> toast.error(...)
-      toast.error("No se pudo eliminar el juego. Inténtalo de nuevo.");
-    } finally {
-      setLoading(false);
-    }
-  };
+    dispatch(removeFromWishlist({ userId, gameId }));
+  };
 
   if (loading) return <p>Cargando tu lista de deseos...</p>;
   if (error) return <p>{error}</p>;
-  if (!wishlist || wishlist.length === 0) {
+  if (!wishlistGames || wishlistGames.length === 0) {
     return (
       <div className="px-[50px] mb-[4rem] mx-auto">
         <p className="my-[100px] text-[30px]">Tu lista de deseos está vacía.</p>
@@ -58,7 +32,7 @@ export default function Wishlist() {
     <div className="px-[50px] mb-[4rem]">
       <h3 className="my-[20px] text-[30px]">Mi Lista de Deseos</h3>
       <div className="flex gap-[3rem]">
-        {wishlist.map((game) => (
+        {wishlistGames.map((game) => (
           <GameCard
             game={game}
             inWishlist={true}

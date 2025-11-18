@@ -1,39 +1,25 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { fetchData } from "../../utils/api";
-import { toast } from "react-toastify";
+import { useDispatch, useSelector } from "react-redux";
+import { deleteGame, fetchGamesAdmin } from "../../redux/gameSlice";
 
 export default function AdminGameList() {
-  const [games, setGames] = useState([]);
+  const games = useSelector((state) => state.games.adminGameList);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    fetchData("/games/admin")
-      .then((data) => {
-        setGames(data);
-      })
-      .catch(() => toast.error("Error al cargar la lista de juegos."));
-  }, []);
+    dispatch(fetchGamesAdmin());
+  }, [dispatch]);
 
   const handleEdit = (id) => {
-    // Navegar a la página de edición del juego
     navigate(`/admin/games/edit/${id}`);
   };
 
   const handleDelete = async (id) => {
     const ok = window.confirm("¿Seguro que querés borrar este juego?");
     if (!ok) return;
-
-    try {
-      const res = await fetchData(`/games/admin/${id}`, { method: "DELETE" });
-      // Si el backend devuelve algún status o body, asumimos éxito si no hay error
-      // Actualizamos la UI para remover el juego eliminado
-      setGames((prev) => prev.filter((g) => g.id !== id));
-      toast.success("Juego eliminado correctamente.");
-    } catch (err) {
-      console.error("Error borrando juego:", err);
-      toast.error("No se pudo eliminar el juego.");
-    }
+    dispatch(deleteGame(id));
   };
 
   return (

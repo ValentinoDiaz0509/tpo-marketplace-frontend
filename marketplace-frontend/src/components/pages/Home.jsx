@@ -1,32 +1,25 @@
 import { useEffect, useMemo, useState } from "react";
-import { fetchData } from "../../utils/api";
 import GameCard from "../common/GameCard";
-import { toast } from "react-toastify";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchGamesUser } from "../../redux/gameSlice";
+import { fetchCategories } from "../../redux/categorySlice";
 
 export default function Home() {
-  const [games, setGames] = useState([]);
+  const dispatch = useDispatch();
+  const games = useSelector((state) => state.games.userGameList);
+  const categories = useSelector((state) => state.categories.categoryList);
 
   // Estados para los filtros
   const [category, setCategory] = useState("");
   const [minPrice, setMinPrice] = useState(""); // Nuevo: Precio Mínimo
   const [maxPrice, setMaxPrice] = useState(""); // Nuevo: Precio Máximo
   const [title, setTitle] = useState("");
-  const [categories, setCategories] = useState([]);
 
   // Carga inicial de todos los juegos.
   useEffect(() => {
-    fetchData("/games/get/available")
-      .then((data) => {
-        setGames(data);
-      })
-      .catch(() => toast.error("Error al cargar la lista de juegos."));
-
-    fetchData("/categories")
-      .then((data) => {
-        setCategories(data.content);
-      })
-      .catch(() => toast.error("Error al cargar las categorías."));
-  }, []);
+    dispatch(fetchGamesUser());
+    dispatch(fetchCategories());
+  }, [dispatch]);
 
   // Función de Filtrado y Ordenamiento usando useMemo
   const filteredGames = useMemo(() => {
@@ -90,16 +83,18 @@ export default function Home() {
           />
 
           {/* Select para Género */}
-          <select
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            className="bg-[#32CD32] p-1"
-          >
-            <option value="">Todos los géneros</option>
-            {categories.map((cat) => (
-              <option value={cat.name}>{cat.name}</option>
-            ))}
-          </select>
+          {
+            <select
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              className="bg-[#32CD32] p-1"
+            >
+              <option value="">Todos los géneros</option>
+              {categories.map((cat) => (
+                <option value={cat.name}>{cat.name}</option>
+              ))}
+            </select>
+          }
 
           {/* 2. Filtro de Rango de Precio */}
           <input

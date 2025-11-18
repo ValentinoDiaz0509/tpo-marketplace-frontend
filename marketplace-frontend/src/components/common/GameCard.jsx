@@ -1,9 +1,11 @@
 import { Link } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
-import { fetchData } from "../../utils/api"; // Asegúrate de que esta ruta sea correcta
+import { addToWishlist } from "../../redux/wishlistSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function GameCard({ game, inWishlist, handleRemoveItem }) {
-  // Verifica si el juego tiene un descuento válido
+  const userId = useSelector((state) => state.auth.userId);
+  const dispatch = useDispatch();
+
   const hasDiscount = game.discount && game.discount > 0;
 
   return (
@@ -27,12 +29,6 @@ export default function GameCard({ game, inWishlist, handleRemoveItem }) {
           <img
             src={game.imageUrl ? encodeURI(game.imageUrl) : game.imageUrl}
             alt={game.name || game.title}
-            /* style={{
-            width: "100%",
-            height: "150px",
-            objectFit: "cover",
-            borderRadius: "4px",
-          }} */
             className="w-full h-full object-contain"
           />
         </div>
@@ -83,7 +79,7 @@ export default function GameCard({ game, inWishlist, handleRemoveItem }) {
             <button
               onClick={(e) => {
                 e.preventDefault();
-                handleRemoveItem(game.id);
+                handleRemoveItem({ gameId: game.id });
               }}
               className="bg-[red] text-white px-3 py-1 rounded"
               style={{ cursor: "pointer", width: "100%" }}
@@ -92,46 +88,9 @@ export default function GameCard({ game, inWishlist, handleRemoveItem }) {
             </button>
           ) : (
             <button
-              onClick={async (e) => {
+              onClick={(e) => {
                 e.preventDefault();
-                e.stopPropagation();
-
-                let wishlistId = localStorage.getItem("wishlistId");
-                const token = localStorage.getItem("token");
-                if (!wishlistId && token) {
-                  try {
-                    const payload = jwtDecode(token);
-                    // En muchos tokens, el ID del usuario está en 'id' o 'sub'
-                    wishlistId = payload.userId;
-                    if (wishlistId)
-                      localStorage.setItem("wishlistId", wishlistId);
-                  } catch (err) {
-                    console.error("Error decodificando token", err);
-                  }
-                }
-
-                if (!wishlistId) {
-                  const input = window.prompt(
-                    "No se pudo determinar tu ID de wishlist. Por favor, pégalo aquí o cancela:"
-                  );
-                  if (!input) return;
-                  wishlistId = input.trim();
-                  localStorage.setItem("wishlistId", wishlistId);
-                }
-
-                try {
-                  // Se usan backticks (`) para insertar la variable
-                  await fetchData(`/wishlist/${wishlistId}/add`, {
-                    method: "PUT",
-                    body: JSON.stringify({ gameId: game.id }),
-                  });
-                  alert("Juego agregado a la wishlist");
-                } catch (err) {
-                  console.error("Error agregando a wishlist", err);
-                  alert(
-                    "No se pudo agregar a la wishlist. Revisa la consola para más detalles."
-                  );
-                }
+                dispatch(addToWishlist({ userId, gameId: game.id }));
               }}
               className="bg-[#32CD32] text-black px-3 py-1 rounded"
               style={{ cursor: "pointer", width: "100%" }}

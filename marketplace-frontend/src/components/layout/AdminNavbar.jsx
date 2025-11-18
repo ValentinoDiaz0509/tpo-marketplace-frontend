@@ -1,10 +1,6 @@
 import { Link } from "react-router-dom";
-import { useContext } from "react";
-import { AuthContext } from "../../context/AuthContext";
 
 export default function AdminNavbar() {
-  const { logout } = useContext(AuthContext);
-
   return (
     <nav
       style={{

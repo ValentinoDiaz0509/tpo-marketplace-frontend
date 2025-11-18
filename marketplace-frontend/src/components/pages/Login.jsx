@@ -1,51 +1,27 @@
-import { useState, useContext } from "react";
-import { fetchData } from "../../utils/api";
-import { AuthContext } from "../../context/AuthContext";
+import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
-import { toast } from "react-toastify"; // 1. Importar toast
+import { useDispatch, useSelector } from "react-redux";
+import { login } from "../../redux/authSlice";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { login } = useContext(AuthContext);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
+  const { loading, role } = useSelector((state) => state.auth);
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setLoading(true);
     try {
-      const res = await fetchData("/api/v1/auth/authenticate", {
-        method: "POST",
-        body: JSON.stringify({ email, password }),
-      });
+      await dispatch(login({ email, password })).unwrap();
 
-      if (res.access_token) {
-        const token = res.access_token;
-        login(token); // Guarda el token en el contexto
-
-        const decodedToken = jwtDecode(token);
-        const userRole = decodedToken.role;
-
-        // 2. Notificación de éxito
-        toast.success(`¡Bienvenido, ${decodedToken.sub}!`);
-
-        if (userRole === "ADMIN") {
-          navigate("/admin/dashboard");
-        } else {
-          navigate("/");
-        }
+      if (role === "ADMIN") {
+        navigate("/admin/dashboard");
       } else {
-        // 3. Notificación de advertencia (en lugar del alert)
-        toast.warn("La respuesta del servidor no es válida.");
+        navigate("/");
       }
-    } catch (err) {
-      console.error("Error de login:", err);
-      // 4. Notificación de error (en lugar del alert)
-      toast.error("Credenciales incorrectas");
-    } finally {
-      setLoading(false);
+    } catch (error) {
+      console.error("Fallo de inicio de sesión:", error);
     }
   };
 

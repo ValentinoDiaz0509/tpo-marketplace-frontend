@@ -1,17 +1,21 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { fetchData } from "../../utils/api";
-import { toast } from "react-toastify";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchCategories } from "../../redux/categorySlice";
+import { fetchGameById, updateGame } from "../../redux/gameSlice";
 
 const AdminEditGame = () => {
   const { id } = useParams(); // obtiene el id desde la URL (ej: /edit-game/5)
+  const dispatch = useDispatch();
+  const categories = useSelector((state) => state.categories.categoryList);
+  const currentGame = useSelector((state) => state.games.currentGame);
+  const loading = useSelector((state) => state.games.loading);
 
   const [title, setTitle] = useState("");
-  const [price, setPrice] = useState("");
-  const [stock, setStock] = useState("");
-  const [discount, setDiscount] = useState("");
+  const [price, setPrice] = useState(0);
+  const [stock, setStock] = useState(0);
+  const [discount, setDiscount] = useState(0);
   const [platform, setPlatform] = useState("");
-  const [categories, setCategories] = useState([]);
   // Ahora permitimos seleccionar varias categorías. Guardamos como array de strings
   // porque los valores del <select> vienen como strings. Convertimos a números al enviar.
   const [selectedCategories, setSelectedCategories] = useState([]);
@@ -21,32 +25,27 @@ const AdminEditGame = () => {
 
   // 🔹 Cargar categorías
   useEffect(() => {
-    fetchData("/categories")
-      .then((data) => {
-        setCategories(data.content);
-      })
-      .catch(() => toast.error("Error al cargar la lista de categorías."));
-  }, []);
+    dispatch(fetchCategories());
+  }, [dispatch]);
 
   // 🔹 Cargar datos del juego
   useEffect(() => {
-    fetch(`http://localhost:4002/games/get/${id}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setTitle(data.title);
-        setPrice(data.price);
-        setStock(data.stock);
-        setDiscount(data.discount);
-        setPlatform(data.platform);
-        // Prefill selected categories (guardar como strings para el select múltiple)
-        setSelectedCategories((data.categories || []).map((c) => String(c.id)));
-        setExistingImage(data.imageUrl);
-      })
-      .catch((err) => {
-        console.error("Error al cargar el juego:", err);
-        toast.error("Error al cargar los datos del juego.");
-      });
-  }, [id]);
+    dispatch(fetchGameById(id));
+  }, [dispatch, id]);
+
+  useEffect(() => {
+    if (currentGame && currentGame.id) {
+      setTitle(currentGame.title || "");
+      setPrice(currentGame.price || 0);
+      setStock(currentGame.stock || 0);
+      setDiscount(currentGame.discount || 0);
+      setPlatform(currentGame.platform || "");
+      setSelectedCategories(
+        (currentGame.categories || []).map((c) => String(c.id))
+      );
+      setExistingImage(currentGame.imageUrl || null);
+    }
+  }, [currentGame]);
 
   // 🔹 Maneja la carga de imagen nueva
   const handleImageChange = (e) => {
@@ -60,58 +59,21 @@ const AdminEditGame = () => {
   // 🔹 Enviar actualización
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const gameData = {
       title,
       price: parseFloat(price),
       stock: parseInt(stock),
-      // Convertir a números antes de enviar
       categoriesIds: selectedCategories.map((c) => parseInt(c)),
       platform,
       discount: parseFloat(discount),
     };
 
-    try {
-      let response;
-      if (imageFile) {
-        // Si hay imagen nueva, usar multipart/form-data
-        const formData = new FormData();
-        formData.append(
-          "game",
-          new Blob([JSON.stringify(gameData)], { type: "application/json" })
-        );
-        formData.append("image", imageFile);
+    dispatch(updateGame({ id, gameData, imageFile }));
+  };
 
-        response = await fetch(
-          `http://localhost:4002/games/admin/${id}/edit-with-image`,
-          {
-            method: "PUT",
-            body: formData,
-            headers: {
-              ...(localStorage.getItem("token")
-                ? { Authorization: `Bearer ${localStorage.getItem("token")}` }
-                : {}),
-            },
-          }
-        );
-      } else {
-        // Si no cambia la imagen
-        response = await fetchData(`/games/admin/${id}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(gameData),
-        });
-      }
-
-      if (response.ok) {
-        toast.success("✅ Videojuego actualizado correctamente");
-      }
-   } catch (error) {
-      console.error("Error al editar el videojuego:", error.message);
-      // 4. Manejo de error para el fetch/fetchData
-      toast.error("Error al editar el videojuego. Inténtalo de nuevo.");
-    }
-  };
+  if (loading) {
+    return <div className="text-center mt-8 text-white">Cargando juego...</div>;
+  }
 
   return (
     <div className="max-w-lg mx-auto mt-8 p-6 bg-[#222222] rounded-2xl shadow-lg mb-[3rem]">

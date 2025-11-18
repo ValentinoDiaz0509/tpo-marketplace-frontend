@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { fetchData, API_URL } from "../../utils/api";
-import { toast } from "react-toastify";
+import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { createGame } from "../../redux/gameSlice";
+import { fetchCategories } from "../../redux/categorySlice";
 
 export default function AdminCreateGame() {
   const [form, setForm] = useState({
@@ -13,19 +14,15 @@ export default function AdminCreateGame() {
     imageUrl: "",
   });
 
-  /* const [preview, setPreview] = useState(null); */
-  const [categories, setCategories] = useState([]);
+  const dispatch = useDispatch();
+  const categories = useSelector((state) => state.categories.categoryList);
   const [imageFile, setImageFile] = useState(null);
   const [preview, setPreview] = useState(null);
 
   // Cargar categorías del backend
   useEffect(() => {
-    fetchData("/categories")
-      .then((data) => {
-        setCategories(data.content);
-      })
-      .catch(() => toast.error("Error al cargar la lista de categorías."));
-  }, []);
+    dispatch(fetchCategories());
+  }, [dispatch]);
 
   const handleChange = (e) => {
     const name = e.target.name;
@@ -56,48 +53,7 @@ export default function AdminCreateGame() {
   // Envío del formulario
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(form);
-
-    try {
-      let created;
-
-      // If an image file was selected, upload as multipart to the backend endpoint
-      if (imageFile) {
-        const formData = new FormData();
-        formData.append("title", form.title);
-        formData.append("price", form.price);
-        formData.append("discount", form.discount || 0);
-        formData.append("stock", form.stock);
-        formData.append("platform", form.platform);
-        // append categoriesIds as multiple fields
-        (form.categoriesIds || []).forEach((id) =>
-          formData.append("categoriesIds", id)
-        );
-        formData.append("imagen", imageFile);
-
-        const token = localStorage.getItem("token");
-        const res = await fetch(`${API_URL}/games/admin/create-with-image`, {
-          method: "POST",
-          body: formData,
-          headers: token ? { Authorization: `Bearer ${token}` } : {},
-        });
-
-        if (!res.ok) throw new Error(`Error ${res.status}`);
-        created = await res.json();
-      } else {
-        created = await fetchData("/games/admin/create", {
-          method: "POST",
-          body: JSON.stringify(form),
-        });
-      }
-      // Si el backend devuelve el objeto creado, asumimos éxito
-      if (created) {
-        toast.success("🎮 Videojuego creado con éxito");
-      }
-    } catch (error) {
-      console.error("Error al enviar:", error.message);
-      toast.error("Error al crear el videojuego. Revisa la consola.");
-    }
+    dispatch(createGame({ gameData: form, imageFile }));
   };
 
   return (

@@ -1,18 +1,14 @@
-// src/components/pages/Orders.jsx
-
-import { useEffect, useState } from "react";
-// Asumo que tu archivo api está en una ruta como esta, ajústala si es necesario
-import { fetchData } from "../../utils/api";
-import { toast } from "react-toastify";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchOrdersByUser } from "../../redux/orderSlice";
 
 export default function Orders() {
-  const [orders, setOrders] = useState([]);
+  const orders = useSelector((state) => state.orders.currentUserOrders);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    fetchData("/order/me")
-      .then(setOrders)
-      .catch(() => toast.error("Error al cargar tus pedidos."));
-  }, []);
+    dispatch(fetchOrdersByUser());
+  }, [dispatch]);
 
   return (
     <div className="max-w-4xl mx-auto p-6">
@@ -24,7 +20,9 @@ export default function Orders() {
           {orders.map((o) => (
             <div key={o.id} className="bg-gray-100 p-4 rounded-lg shadow">
               <p className="text-gray-900">
-                <b className="text-gray-900 font-semibold">Pedido #{o.id}</b> — Total: ${o.totalPrice} — Fecha: {new Date(o.date).toLocaleDateString()}
+                <b className="text-gray-900 font-semibold">Pedido #{o.id}</b> —
+                Total: ${o.totalPrice} — Fecha:{" "}
+                {new Date(o.date).toLocaleDateString()}
               </p>
             </div>
           ))}

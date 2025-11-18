@@ -1,8 +1,7 @@
 import { useState } from "react";
-import { fetchData } from "../../utils/api";
-import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify"; // 1. Importar toast
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { register } from "../../redux/authSlice";
 
 export default function Register() {
   const [form, setForm] = useState({
@@ -12,34 +11,22 @@ export default function Register() {
     password: "",
     passwordRepeat: "",
   });
-  const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
+  const loading = useSelector((state) => state.auth.loading);
 
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    try {
-      await fetchData("/api/v1/auth/register", {
-        method: "POST",
-        body: JSON.stringify(form),
-      });
-
-      // 2. Notificación de éxito
-      toast.success("¡Registro exitoso! Ahora podés iniciar sesión.");
-
-      navigate("/login"); // Redirigimos al login para que el usuario ingrese
-    } catch (err) {
-      console.error("Error en el registro:", err);
-      // 3. Notificación de error
-      toast.error(
-        "Error al registrar. Es posible que el email ya esté en uso."
-      );
-    } finally {
-      setLoading(false);
-    }
+    dispatch(register(form));
+    setForm({
+      firstName: "",
+      lastName: "",
+      email: "",
+      password: "",
+      passwordRepeat: "",
+    });
   };
 
   return (

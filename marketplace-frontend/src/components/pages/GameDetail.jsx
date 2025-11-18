@@ -1,22 +1,21 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { fetchData } from "../../utils/api";
 import { toast } from "react-toastify";
+import { fetchGameById } from "../../redux/gameSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function GameDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [game, setGame] = useState(null);
+  const dispatch = useDispatch();
+  const currentGame = useSelector((state) => state.games.currentGame);
+  const loading = useSelector((state) => state.games.loading);
   const [quantity, setQuantity] = useState(1);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // 👇 CORRECCIÓN DE SINTAXIS AQUÍ
-    fetchData(`/games/get/${id}`)
-      .then((g) => setGame(g))
-      .catch(() => toast.error("No se pudo cargar la información del juego."))
-      .finally(() => setLoading(false));
-  }, [id]);
+    dispatch(fetchGameById(id));
+  }, [dispatch, id]);
 
   const handleBuy = async (e) => {
     e.preventDefault();
@@ -24,7 +23,9 @@ export default function GameDetail() {
     const token = localStorage.getItem("token");
     if (!token) {
       // 2. REEMPLAZO: alert("Debes iniciar sesión...") -> toast.warn(...)
-      toast.warn("Debes iniciar sesión para completar la compra. Serás redirigido.");
+      toast.warn(
+        "Debes iniciar sesión para completar la compra. Serás redirigido."
+      );
       navigate("/login");
       return;
     }
@@ -52,18 +53,24 @@ export default function GameDetail() {
         navigate("/login");
         return;
       }
-      toast.error("Error al crear el pedido: " + (err.message || "Error desconocido"));
+      toast.error(
+        "Error al crear el pedido: " + (err.message || "Error desconocido")
+      );
     }
   };
   if (loading) return <p>Cargando...</p>;
-  if (!game) return <p>Juego no encontrado</p>;
+  if (!currentGame) return <p>Juego no encontrado</p>;
 
   return (
     <div className="max-w-3xl mx-auto p-6">
       <div style={{ display: "flex", gap: 20 }}>
         <img
-          src={game.imageUrl ? encodeURI(game.imageUrl) : game.imageUrl}
-          alt={game.title}
+          src={
+            currentGame.imageUrl
+              ? encodeURI(currentGame.imageUrl)
+              : currentGame.imageUrl
+          }
+          alt={currentGame.title}
           onError={(e) => {
             e.target.onerror = null;
             e.target.src = "/placeholder-game.png";
@@ -76,18 +83,18 @@ export default function GameDetail() {
           }}
         />
         <div>
-          <h1 className="text-2xl font-bold">{game.title}</h1>
-          <p className="mt-2">{game.description}</p>
+          <h1 className="text-2xl font-bold">{currentGame.title}</h1>
+          <p className="mt-2">{currentGame.description}</p>
           <p className="mt-4 font-bold">
-            Precio: ${game.finalPrice ?? game.price}
+            Precio: ${currentGame.finalPrice ?? currentGame.price}
           </p>
-          <p>Stock disponible: {game.stock}</p>
+          <p>Stock disponible: {currentGame.stock}</p>
           <form onSubmit={handleBuy} className="mt-4">
             <label className="block">Cantidad</label>
             <input
               type="number"
               min="1"
-              max={game.stock}
+              max={currentGame.stock}
               value={quantity}
               onChange={(e) => setQuantity(e.target.value)}
               className="border rounded p-1 w-24"

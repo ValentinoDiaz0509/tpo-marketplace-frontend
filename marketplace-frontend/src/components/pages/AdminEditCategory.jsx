@@ -1,42 +1,37 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { fetchData } from "../../utils/api";
-import { toast } from "react-toastify";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchCategoryById, updateCategory } from "../../redux/categorySlice";
 
 const AdminEditCategory = () => {
-  const { id } = useParams(); // obtiene el id desde la URL (ej: /edit-category/3)
+  const { id } = useParams();
+  const category = useSelector((state) => state.categories.currentCategory);
+  const loading = useSelector((state) => state.categories.loading);
   const [name, setName] = useState("");
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    fetchData(`/categories/${id}`)
-      .then((data) => {
-        setName(data.name);
-      })
-      .catch(() => toast.error("Error al cargar la categoría."));
-  }, [id]);
+    dispatch(fetchCategoryById(id));
+  }, [dispatch, id]);
+
+  useEffect(() => {
+    // Solo actualiza el estado local si la categoría existe y si el nombre es diferente
+    if (category && category.name) {
+      setName(category.name);
+    }
+  }, [category]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const updatedCategory = { name };
-
-    try {
-      const response = await fetchData(`/categories/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updatedCategory),
-      });
-
-      if (response.ok) {
-        toast.success("✅ Categoría actualizada correctamente");
-      }
-    } catch (error) {
-      console.error("Error al editar la categoría:", error.message);
-      toast.error("Error de red o conexión al intentar guardar la categoría.");
-    }
+    const categoryData = { name };
+    dispatch(updateCategory({ id, categoryData }));
   };
+
+  if (loading) {
+    return (
+      <div className="text-center mt-8 text-white">Cargando categoría...</div>
+    );
+  }
 
   return (
     <div className="max-w-lg mx-auto mt-8 p-6 bg-[#222222] rounded-2xl shadow-lg mb-[3rem]">

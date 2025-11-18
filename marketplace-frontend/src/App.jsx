@@ -1,12 +1,12 @@
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; // Importa los estilos
 import AppRouter from "./router/AppRouter";
-import { AuthProvider } from "./context/AuthContext";
+
 import "../src/App.css";
 
 function App() {
   return (
-    <AuthProvider>
+    <>
       <AppRouter />
       <ToastContainer
         position="bottom-right"
@@ -20,7 +20,7 @@ function App() {
         pauseOnHover
         theme="dark"
       />
-    </AuthProvider>
+    </>
   );
 }
 

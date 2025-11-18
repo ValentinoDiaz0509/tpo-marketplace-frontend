@@ -1,9 +1,8 @@
-import { useContext } from "react";
 import { Navigate } from "react-router-dom";
-import { AuthContext } from "../context/AuthContext";
+import { useSelector } from "react-redux";
 
 const PrivateRoute = ({ children, requiredRole }) => {
-  const { token, role, loading } = useContext(AuthContext);
+  const { token, role, loading } = useSelector((state) => state.auth);
 
   // Mientras se verifica la autenticación, mostramos un loader.
   if (loading) {

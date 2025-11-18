@@ -1,9 +1,14 @@
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { useContext } from "react";
-import { AuthContext } from "../../context/AuthContext";
+import { logout } from "../../redux/authSlice";
 
 export default function Navbar() {
-  const { token, role, logout } = useContext(AuthContext);
+  const dispatch = useDispatch();
+  const { token, role } = useSelector((state) => state.auth);
+
+  const handleLogout = () => {
+    dispatch(logout());
+  };
 
   return (
     <header className="w-full px-4 sm:px-6 lg:px-8">
@@ -20,7 +25,7 @@ export default function Navbar() {
               {role && role == "ADMIN" && (
                 <Link to="/admin/dashboard">Admin</Link>
               )}
-              <button onClick={logout}>Cerrar sesión</button>
+              <button onClick={handleLogout}>Cerrar sesión</button>
             </>
           ) : (
             <>

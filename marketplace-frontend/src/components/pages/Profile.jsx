@@ -1,11 +1,10 @@
-import { useContext, useEffect, useState } from "react";
-import { fetchData } from "../../utils/api";
-import { AuthContext } from "../../context/AuthContext";
-import { toast } from "react-toastify";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchUserProfile, updateUserProfile } from "../../redux/profileSlice";
 
 export default function Profile() {
-  const { logout, login } = useContext(AuthContext);
-  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
+  const { userData, loading } = useSelector((state) => state.profile);
   const [form, setForm] = useState({
     email: "",
     firstName: "",
@@ -14,63 +13,31 @@ export default function Profile() {
   });
 
   useEffect(() => {
-    setLoading(true);
-    fetchData("/api/v1/users/me")
-      .then((data) => {
-        setForm((prevForm) => ({ ...prevForm, ...data }));
-      })
-      .catch(() => toast.error("Error al cargar los datos de tu perfil."));
+    dispatch(fetchUserProfile());
+  }, [dispatch]);
 
-    setLoading(false);
-  }, []);
+  useEffect(() => {
+    if (userData) {
+      setForm({
+        email: userData.email || "",
+        firstName: userData.firstName || "",
+        lastName: userData.lastName || "",
+        password: "",
+      });
+    }
+  }, [userData]);
 
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleUpdate = async (e) => {
     e.preventDefault();
-    try {
-      const res = await fetchData("/api/v1/users/me", {
-        method: "PUT",
-        body: JSON.stringify(form),
-      });
-
-      // If backend returned an auth token (password was changed), log the user in with the new token
-      if (res && res.access_token) {
-        login(res.access_token);
-        // 2. REEMPLAZO: alert("Perfil actualizado...") -> toast.success(...)
-        toast.success(
-          "Perfil actualizado. Se generó un nuevo token y se mantuvo la sesión."
-        );
-      } else {
-        // 204 No Content — profile updated but no re-auth required
-        // 3. REEMPLAZO: alert("Perfil actualizado") -> toast.success(...)
-        toast.success("Perfil actualizado correctamente.");
-      }
-
-      // Clear sensitive field
-      setForm((prev) => ({ ...prev, password: "" }));
-    } catch (e) {
-      // 4. REEMPLAZO: alert(e.message) -> toast.error(...)
-      toast.error(`Error al actualizar: ${e.message}`);
-    }
-  };
+    dispatch(updateUserProfile(form));
+    setForm((prev) => ({ ...prev, password: "" }));
+  };
 
   return (
     <div className="relative flex h-screen w-full flex-col items-center justify-center overflow-hidden font-display bg-[#121212]">
-      {/* --- CAPA DE FONDO CON IMAGEN (ESTO TAMBIÉN FALTABA) --- */}
-      {/* <div className="absolute inset-0 z-0">
-            <div
-              className="w-full h-full bg-center bg-no-repeat bg-cover"
-              style={{
-                backgroundImage:
-                  'url("https://images.unsplash.com/photo-1555864408-5626a424266c?q=80&w=1932&auto=format&fit=crop")',
-                filter: "blur(4px) brightness(0.6)",
-              }}
-            ></div>
-          </div> */}
-
-      {/* --- EL FORMULARIO (ESTO ES LO QUE YA TENÍAS BIEN) --- */}
       <form
         onSubmit={handleUpdate}
         className="relative z-10 flex w-full max-w-md flex-col items-center rounded-xl bg-[#222222] p-8 backdrop-blur-sm text-white"

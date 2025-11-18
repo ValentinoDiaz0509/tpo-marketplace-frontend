@@ -1,46 +1,34 @@
-import { useEffect, useState } from "react";
-import { fetchData } from "../../utils/api";
+import { useEffect } from "react";
 import { toast } from "react-toastify";
+import { useDispatch, useSelector } from "react-redux";
+import { changeUserRole, fetchAllUsers } from "../../redux/userSlice";
 
 export default function AdminUserList() {
-  const [users, setUsers] = useState([]);
+  const users = useSelector((state) => state.users.userList);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    fetchData("/api/v1/admin/usuarios")
-      .then((data) => {
-        setUsers(data);
-      })
-      .catch(() => toast.error("Error al cargar la lista de usuarios."));
-  }, []);
+    dispatch(fetchAllUsers());
+  }, [dispatch]);
 
   const handleMakeAdmin = async (user) => {
     const userId = user?.id;
     if (!userId) {
-       toast.error(
-        "No se puede cambiar el rol: el usuario no tiene ID definido. Revisa la consola."
-      );
+      toast.error(
+        "No se puede cambiar el rol: el usuario no tiene ID definido. Revisa la consola."
+      );
       console.error("Usuario sin id recibido desde backend:", user);
       return;
     }
 
-    const ok = window.confirm("¿Asignar rol ADMIN a este usuario?");
+    const ok = window.confirm(
+      "¿Seguro que quieres cambiarle el rol a este usuario?"
+    );
     if (!ok) return;
 
-    try {
-      await fetchData(`/api/v1/admin/usuarios/${userId}/rol`, {
-        method: "PUT",
-        body: JSON.stringify({ nuevoRol: "ADMIN" }),
-      });
+    const userRole = { nuevoRol: user.role === "USER" ? "ADMIN" : "USER" };
 
-      // Actualizar estado localmente
-      setUsers((prev) =>
-        prev.map((u) => (u.id === userId ? { ...u, role: "ADMIN" } : u))
-      );
-      toast.success("Rol actualizado a ADMIN correctamente.");
-    } catch (err) {
-      console.error("Error cambiando rol:", err);
-      toast.error("No se pudo cambiar el rol.");
-    }
+    dispatch(changeUserRole({ userId, userRole }));
   };
 
   return (
@@ -89,7 +77,7 @@ export default function AdminUserList() {
                       onClick={() => handleMakeAdmin(u)}
                       class="font-medium text-primary hover:underline"
                     >
-                      Hacer admin
+                      {u.role === "USER" ? "Hacer admin" : "Hacer user"}
                     </button>
                   </div>
                 </td>

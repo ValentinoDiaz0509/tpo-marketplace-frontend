@@ -1,38 +1,16 @@
 import { useState } from "react";
-import { fetchData } from "../../utils/api";
-import { toast } from "react-toastify";
+import { useDispatch } from "react-redux";
+import { createCategory } from "../../redux/categorySlice";
 
 const AdminCreateCategory = () => {
   const [name, setName] = useState("");
+  const dispatch = useDispatch();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const categoryData = { name };
-
-    try {
-      const response = await fetchData("/categories/create", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(categoryData),
-      });
-
-      if (response.ok) {
-        toast.success("✅ Categoría creada exitosamente");
-        setName("");
-      } else {
-            // Manejo de error para respuestas HTTP no exitosas (ej. 409 Conflict)
-            const errorData = await response.json();
-            toast.error(`Error (${response.status}): ${errorData.message || 'No se pudo crear la categoría.'}`);
-     }
-    } catch (error) {
-      // 2. REEMPLAZO: console.error + sin alert -> toast.error(...)
-      console.error("Error al crear la categoría:", error.message);
-      toast.error("Error de red o conexión al crear la categoría.");
-    }
-  };
+    dispatch(createCategory(categoryData));
+  };
 
   return (
     <div className="max-w-lg mx-auto mt-8 p-6 bg-[#222222] rounded-2xl shadow-lg mb-[3rem]">

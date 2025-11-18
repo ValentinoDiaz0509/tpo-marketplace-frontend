@@ -1,19 +1,16 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { fetchData } from "../../utils/api";
-import { toast } from "react-toastify";
+import { useDispatch, useSelector } from "react-redux";
+import { deleteCategory, fetchCategories } from "../../redux/categorySlice";
 
 export default function AdminCategoryList() {
-  const [categories, setCategories] = useState([]);
+  const categories = useSelector((state) => state.categories.categoryList);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    fetchData("/categories")
-      .then((data) => {
-        setCategories(data.content);
-      })
-      .catch(() => toast.error("Error al cargar la lista de categorías."));
-  }, []);
+    dispatch(fetchCategories());
+  }, [dispatch]);
 
   const handleEdit = (id) => {
     navigate(`/admin/categories/edit/${id}`);
@@ -23,14 +20,7 @@ export default function AdminCategoryList() {
     const ok = window.confirm("¿Seguro que querés borrar esta categoría?");
     if (!ok) return;
 
-    try {
-      await fetchData(`/categories/${id}`, { method: "DELETE" });
-      setCategories((prev) => prev.filter((c) => c.id !== id));
-      toast.success("Categoría eliminada correctamente.");
-    } catch (err) {
-      console.error("Error borrando categoría:", err);
-      toast.error("No se pudo eliminar la categoría.");
-    }
+    dispatch(deleteCategory(id));
   };
 
   return (

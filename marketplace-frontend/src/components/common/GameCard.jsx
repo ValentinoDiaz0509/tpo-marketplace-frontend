@@ -1,12 +1,38 @@
 import { Link } from "react-router-dom";
-import { addToWishlist } from "../../redux/wishlistSlice";
+import { addToWishlist, removeFromWishlist } from "../../redux/wishlistSlice";
 import { useDispatch, useSelector } from "react-redux";
 
-export default function GameCard({ game, inWishlist, handleRemoveItem }) {
-  const userId = useSelector((state) => state.auth.userId);
+export default function GameCard({ game }) {
+  const { userId, role } = useSelector((state) => state.auth);
+  const wishlistGames = useSelector((state) => state.wishlist.wishlistGames);
   const dispatch = useDispatch();
 
+  const isGameInWishlist = wishlistGames.some((item) => item.id === game.id);
   const hasDiscount = game.discount && game.discount > 0;
+
+  const handleToggleWishlist = (e) => {
+    e.preventDefault(); // Previene la navegación del Link
+
+    if (!userId) {
+      // Opcional: Redirigir a login o mostrar toast
+      console.error("Usuario no autenticado");
+      return;
+    }
+
+    const payload = { userId, gameId: game.id };
+
+    if (isGameInWishlist) {
+      // 2. Si ya está, despachar removeFromWishlist
+      dispatch(removeFromWishlist(payload));
+    } else {
+      // 3. Si no está, despachar addToWishlist
+      // Nota: El thunk addToWishlist no actualiza el estado local (state.wishlistGames),
+      // por lo que después de agregar, probablemente necesites volver a cargar la lista,
+      // o idealmente, hacer que el thunk devuelva el juego agregado para que el reducer lo inserte.
+      // Para mantener la consistencia con el slice actual, solo despachamos.
+      dispatch(addToWishlist(payload));
+    }
+  };
 
   return (
     <Link
@@ -74,30 +100,22 @@ export default function GameCard({ game, inWishlist, handleRemoveItem }) {
           )}
         </div>
 
-        <div style={{ marginTop: 8, display: "flex", gap: 8 }}>
-          {inWishlist ? (
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                handleRemoveItem({ gameId: game.id });
-              }}
-              className="bg-[red] text-white px-3 py-1 rounded"
-              style={{ cursor: "pointer", width: "100%" }}
-            >
-              Eliminar
-            </button>
-          ) : (
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                dispatch(addToWishlist({ userId, gameId: game.id }));
-              }}
-              className="bg-[#32CD32] text-black px-3 py-1 rounded"
-              style={{ cursor: "pointer", width: "100%" }}
-            >
-              Añadir a wishlist
-            </button>
-          )}
+        <div
+          style={{ marginTop: 8, display: "flex", gap: 8 }}
+          className={role === "ADMIN" && ""}
+        >
+          <button
+            onClick={handleToggleWishlist}
+            className={
+              isGameInWishlist
+                ? "bg-[red] text-white px-3 py-1 rounded disabled:bg-gray-100 disabled:opacity-[0.2] disabled:text-black" // Estilo para Eliminar
+                : "bg-[#32CD32] text-black px-3 py-1 rounded disabled:bg-gray-100 disabled:opacity-[0.2]" // Estilo para Añadir
+            }
+            style={{ cursor: "pointer", width: "100%" }}
+            disabled={role === "ADMIN"}
+          >
+            {isGameInWishlist ? "Eliminar de Wishlist" : "Añadir a Wishlist"}
+          </button>
         </div>
       </div>
     </Link>

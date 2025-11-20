@@ -19,9 +19,9 @@ export const addToWishlist = createAsyncThunk(
   "wishlist/addToWishlist",
   async ({ userId, gameId }, { rejectWithValue }) => {
     try {
-      await axios.put(`/wishlist/${userId}/add`, { gameId });
+      const { data } = await axios.put(`/wishlist/${userId}/add`, { gameId });
       toast.success("Juego agregado a tu lista de deseos.");
-      return true;
+      return data;
     } catch (err) {
       toast.error(err.message);
       return rejectWithValue(err.message);
@@ -33,9 +33,11 @@ export const removeFromWishlist = createAsyncThunk(
   "wishlist/removeFromWishlist",
   async ({ userId, gameId }, { rejectWithValue }) => {
     try {
-      await axios.put(`/wishlist/${userId}/delete`, gameId);
+      const { data } = await axios.put(`/wishlist/${userId}/delete`, {
+        gameId,
+      });
       toast.success("Juego eliminado de tu lista de deseos.");
-      return gameId;
+      return data;
     } catch (err) {
       toast.error(err.message);
       return rejectWithValue(err.message);
@@ -69,7 +71,8 @@ const wishlistSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(addToWishlist.fulfilled, (state) => {
+      .addCase(addToWishlist.fulfilled, (state, action) => {
+        state.wishlistGames = action.payload.gameList;
         state.loading = false;
       })
       .addCase(addToWishlist.rejected, (state, action) => {
@@ -81,10 +84,7 @@ const wishlistSlice = createSlice({
         state.error = null;
       })
       .addCase(removeFromWishlist.fulfilled, (state, action) => {
-        const removedGameId = action.payload.gameId;
-        state.wishlistGames = state.wishlistGames.filter(
-          (game) => game.id !== removedGameId
-        );
+        state.wishlistGames = action.payload.gameList;
         state.loading = false;
       })
       .addCase(removeFromWishlist.rejected, (state, action) => {

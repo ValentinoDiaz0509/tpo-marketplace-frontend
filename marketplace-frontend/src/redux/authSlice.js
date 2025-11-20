@@ -47,7 +47,7 @@ export const login = createAsyncThunk(
 const getInitialState = () => {
   const token = localStorage.getItem("token");
   const role = localStorage.getItem("role");
-  const userId = localStorage.getItem("userId");
+  const userId = parseInt(localStorage.getItem("userId"));
 
   return {
     token: token || null,

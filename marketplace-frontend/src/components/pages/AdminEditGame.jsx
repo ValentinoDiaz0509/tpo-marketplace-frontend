@@ -38,7 +38,7 @@ const AdminEditGame = () => {
       setTitle(currentGame.title || "");
       setPrice(currentGame.price || 0);
       setStock(currentGame.stock || 0);
-      setDiscount(currentGame.discount || 0);
+      setDiscount(currentGame.discount * 100 || 0);
       setPlatform(currentGame.platform || "");
       setSelectedCategories(
         (currentGame.categories || []).map((c) => String(c.id))
@@ -65,7 +65,7 @@ const AdminEditGame = () => {
       stock: parseInt(stock),
       categoriesIds: selectedCategories.map((c) => parseInt(c)),
       platform,
-      discount: parseFloat(discount),
+      discount: parseFloat(parseInt(discount) / 100 || 0.0),
     };
 
     dispatch(updateGame({ id, gameData, imageFile }));
@@ -80,64 +80,67 @@ const AdminEditGame = () => {
       <h2 className="text-2xl font-bold mb-6 text-center">Editar videojuego</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block font-medium mb-1">Título:</label>
+          <label className="block font-medium mb-1">Título</label>
           <input
             className="w-full border rounded-lg p-2"
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
+            placeholder="Ej: Hogwarts Legacy"
             required
           />
         </div>
 
         <div>
-          <label className="block font-medium mb-1">Precio:</label>
+          <label className="block font-medium mb-1">Precio ($)</label>
           <input
             className="w-full border rounded-lg p-2"
             type="number"
-            step="0.01"
             value={price}
             onChange={(e) => setPrice(e.target.value)}
+            placeholder="Ej: 30"
             required
           />
         </div>
 
         <div>
-          <label className="block font-medium mb-1">Descuento:</label>
+          <label className="block font-medium mb-1">Descuento (%)</label>
           <input
             className="w-full border rounded-lg p-2"
             type="number"
-            step="0.01"
             value={discount}
             onChange={(e) => setDiscount(e.target.value)}
+            placeholder="Ej: 15"
             required
           />
         </div>
 
         <div>
-          <label className="block font-medium mb-1">Stock:</label>
+          <label className="block font-medium mb-1">Stock</label>
           <input
             className="w-full border rounded-lg p-2"
             type="number"
             value={stock}
             onChange={(e) => setStock(e.target.value)}
+            placeholder="Ej: 100"
             required
           />
         </div>
 
         <div>
-          <label className="block font-medium mb-1">Plataforma:</label>
+          <label className="block font-medium mb-1">Plataforma</label>
           <input
             className="w-full border rounded-lg p-2"
             type="text"
             value={platform}
             onChange={(e) => setPlatform(e.target.value)}
+            placeholder="Ej: PC"
             required
           />
         </div>
 
         <div>
-          <label className="block font-medium mb-1">Categorías:</label>
+          <label className="block font-medium mb-1">Categorías</label>
           <select
             className="w-full border rounded-lg p-2"
             multiple
@@ -160,7 +163,7 @@ const AdminEditGame = () => {
         </div>
 
         <div>
-          <label className="block font-medium mb-1">Imagen (opcional):</label>
+          <label className="block font-medium mb-1">Imagen (opcional)</label>
           <input
             className="w-full border rounded-lg p-2"
             type="file"

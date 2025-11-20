@@ -3,11 +3,13 @@ import GameCard from "../common/GameCard";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchGamesUser } from "../../redux/gameSlice";
 import { fetchCategories } from "../../redux/categorySlice";
+import { fetchWishlist } from "../../redux/wishlistSlice";
 
 export default function Home() {
   const dispatch = useDispatch();
   const games = useSelector((state) => state.games.userGameList);
   const categories = useSelector((state) => state.categories.categoryList);
+  const { userId, role } = useSelector((state) => state.auth);
 
   // Estados para los filtros
   const [category, setCategory] = useState("");
@@ -19,7 +21,10 @@ export default function Home() {
   useEffect(() => {
     dispatch(fetchGamesUser());
     dispatch(fetchCategories());
-  }, [dispatch]);
+    if (userId && role === "USER") {
+      dispatch(fetchWishlist(userId));
+    }
+  }, [dispatch, userId, role]);
 
   // Función de Filtrado y Ordenamiento usando useMemo
   const filteredGames = useMemo(() => {

@@ -6,9 +6,9 @@ import { fetchCategories } from "../../redux/categorySlice";
 export default function AdminCreateGame() {
   const [form, setForm] = useState({
     title: "",
-    price: "",
-    discount: "",
-    stock: "",
+    price: 0,
+    discount: 0,
+    stock: 0,
     categoriesIds: [],
     platform: "",
     imageUrl: "",
@@ -53,7 +53,17 @@ export default function AdminCreateGame() {
   // Envío del formulario
   const handleSubmit = async (e) => {
     e.preventDefault();
-    dispatch(createGame({ gameData: form, imageFile }));
+
+    const gameData = {
+      title: form.title,
+      price: parseFloat(form.price),
+      discount: parseFloat(parseInt(form.discount) / 100 || 0.0), // Asegurar valor
+      stock: parseInt(form.stock, 10),
+      platform: form.platform,
+      categoriesIds: form.categoriesIds, // Ya es un array de numbers/strings
+    };
+
+    dispatch(createGame({ gameData: gameData, imageFile }));
   };
 
   return (
@@ -71,6 +81,7 @@ export default function AdminCreateGame() {
             type="text"
             onChange={handleChange}
             className="w-full border rounded-lg p-2"
+            placeholder="Ej: Hogwarts Legacy"
             required
           />
         </div>
@@ -83,18 +94,19 @@ export default function AdminCreateGame() {
             type="number"
             onChange={handleChange}
             className="w-full border rounded-lg p-2"
+            placeholder="Ej: 30"
             required
           />
         </div>
 
         <div>
-          <label className="block font-medium mb-1">Descuento</label>
+          <label className="block font-medium mb-1">Descuento (%)</label>
           <input
             name="discount"
             className="w-full border rounded-lg p-2"
             type="number"
-            step="0.01"
             onChange={handleChange}
+            placeholder="Ej: 20"
             required
           />
         </div>
@@ -107,6 +119,7 @@ export default function AdminCreateGame() {
             type="number"
             onChange={handleChange}
             className="w-full border rounded-lg p-2"
+            placeholder="Ej: 100"
             required
           />
         </div>
@@ -119,6 +132,7 @@ export default function AdminCreateGame() {
             type="text"
             onChange={handleChange}
             className="w-full border rounded-lg p-2"
+            placeholder="Ej: PC"
             required
           />
         </div>

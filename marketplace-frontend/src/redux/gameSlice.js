@@ -47,15 +47,27 @@ export const createGame = createAsyncThunk(
     try {
       if (imageFile) {
         const formData = new FormData();
-        formData.append(
-          "game",
-          new Blob([JSON.stringify(gameData)], { type: "application/json" })
-        );
-        formData.append("image", imageFile);
+        // 1. Añadir el archivo de imagen con el nombre 'imagen'
+        formData.append("imagen", imageFile);
 
-        await axios.post(`/admin/create-with-image`, formData);
+        // 2. Añadir todos los campos del juego individualmente
+        formData.append("title", gameData.title);
+        formData.append("price", gameData.price);
+        formData.append("stock", gameData.stock);
+        formData.append("platform", gameData.platform);
+        // Asegurar que el descuento tenga un valor por defecto si no está presente
+        formData.append("discount", gameData.discount || 0.0);
+
+        // 3. Manejar el array categoriesIds
+        // Spring espera múltiples RequestParams con el mismo nombre para un List<Long>.
+        // FormData lo maneja correctamente añadiendo múltiples veces la clave.
+        gameData.categoriesIds.forEach((id) => {
+          formData.append("categoriesIds", id);
+        });
+
+        await axios.post(`/games/admin/create-with-image`, formData);
       } else {
-        await axios.post(`/admin/create`, gameData);
+        await axios.post(`/games/admin/create`, gameData);
       }
 
       toast.success("✅ Videojuego creado correctamente");

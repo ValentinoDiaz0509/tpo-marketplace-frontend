@@ -7,6 +7,8 @@ export const fetchOrdersByUser = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const { data } = await axios.get(`/order/me`);
+      console.log(data);
+
       return data;
     } catch (err) {
       toast.error(err.message);

@@ -17,8 +17,13 @@ export default function Navbar() {
         <nav className="hidden md:flex items-center gap-6">
           {token ? (
             <>
-              {role && role == "USER" && <Link to="/">Catálogo</Link>}
+              {((role && role == "USER") || role == "ADMIN") && (
+                <Link to="/">Catálogo</Link>
+              )}
               {role && role == "USER" && <Link to="/wishlist">Wishlist</Link>}
+              {role && role == "USER" && (
+                <Link to="/shoppingCart">Carrito</Link>
+              )}
               {role && role == "USER" && <Link to="/orders">Mis compras</Link>}
 
               <Link to="/userProfile">Mi perfil</Link>

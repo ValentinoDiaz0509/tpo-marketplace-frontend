@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import GameCard from "../common/GameCard";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchWishlist, removeFromWishlist } from "../../redux/wishlistSlice";
+import { fetchWishlist } from "../../redux/wishlistSlice";
 
 export default function Wishlist() {
   const { wishlistGames, loading, error } = useSelector(
@@ -13,10 +13,6 @@ export default function Wishlist() {
   useEffect(() => {
     dispatch(fetchWishlist(userId));
   }, [dispatch, userId]);
-
-  const handleRemoveItem = async (gameId) => {
-    dispatch(removeFromWishlist({ userId, gameId }));
-  };
 
   if (loading) return <p>Cargando tu lista de deseos...</p>;
   if (error) return <p>{error}</p>;
@@ -33,11 +29,7 @@ export default function Wishlist() {
       <h3 className="my-[20px] text-[30px]">Mi Lista de Deseos</h3>
       <div className="flex gap-[3rem]">
         {wishlistGames.map((game) => (
-          <GameCard
-            game={game}
-            inWishlist={true}
-            handleRemoveItem={handleRemoveItem}
-          />
+          <GameCard game={game} />
         ))}
       </div>
     </div>

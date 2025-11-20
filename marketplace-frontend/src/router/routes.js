@@ -15,6 +15,7 @@ import GameDetail from "../components/pages/GameDetail";
 import Orders from "../components/pages/Orders";
 import Wishlist from "../components/pages/Wishlist";
 import ForgotPassword from "../components/pages/ForgotPassword";
+import ShoppingCart from "../components/pages/ShoppingCart";
 
 export const routes = [
   {
@@ -56,7 +57,8 @@ export const routes = [
   {
     id: "checkout",
     path: "/checkout/:gameId",
-    Element: () => import('../components/pages/PaymentForm').then(m => m.default),
+    Element: () =>
+      import("../components/pages/PaymentForm").then((m) => m.default),
     requiredRole: "USER",
   },
   // 👇 2. RUTA AÑADIDA
@@ -71,6 +73,12 @@ export const routes = [
     path: "/wishlist",
     Element: Wishlist,
     requiredRole: "USER", // La wishlist solo debe ser visible para usuarios logueados
+  },
+  {
+    id: "shoppingCart",
+    path: "/shoppingCart",
+    Element: ShoppingCart,
+    requiredRole: "USER",
   },
   {
     id: "admin",

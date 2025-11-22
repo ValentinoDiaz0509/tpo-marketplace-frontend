@@ -23,6 +23,11 @@ export default function AdminNavbar() {
       >
         CATEGORÍAS
       </Link>
+      {/* <-- NUEVO ENLACE A PEDIDOS --> */}
+      <Link to="orders" className="bg-[#32CD32] px-4 py-2 rounded-lg font-bold">
+        PEDIDOS
+      </Link>
+      {/* <-- FIN NUEVO ENLACE --> */}
     </nav>
   );
 }

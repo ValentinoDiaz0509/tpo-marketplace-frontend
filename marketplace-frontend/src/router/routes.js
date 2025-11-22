@@ -16,6 +16,7 @@ import Orders from "../components/pages/Orders";
 import Wishlist from "../components/pages/Wishlist";
 import ForgotPassword from "../components/pages/ForgotPassword";
 import ShoppingCart from "../components/pages/ShoppingCart";
+import AdminOrderList from "../components/pages/AdminOrderList"; // <-- NUEVA IMPORTACIÓN
 
 export const routes = [
   {
@@ -55,14 +56,6 @@ export const routes = [
     requiredRole: null,
   },
   {
-    id: "checkout",
-    path: "/checkout/:gameId",
-    Element: () =>
-      import("../components/pages/PaymentForm").then((m) => m.default),
-    requiredRole: "USER",
-  },
-  // 👇 2. RUTA AÑADIDA
-  {
     id: "orders",
     path: "/orders",
     Element: Orders,
@@ -72,7 +65,7 @@ export const routes = [
     id: "wishlist",
     path: "/wishlist",
     Element: Wishlist,
-    requiredRole: "USER", // La wishlist solo debe ser visible para usuarios logueados
+    requiredRole: "USER",
   },
   {
     id: "shoppingCart",
@@ -91,6 +84,13 @@ export const routes = [
         path: "dashboard",
         Element: AdminDashboard,
       },
+      // <-- NUEVA RUTA PARA ÓRDENES
+      {
+        id: "admin-orders",
+        path: "orders",
+        Element: AdminOrderList,
+      },
+      // -->
       {
         id: "admin-categories",
         path: "categories",

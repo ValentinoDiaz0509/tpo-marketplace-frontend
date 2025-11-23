@@ -13,9 +13,12 @@ export default function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      await dispatch(login({ email, password })).unwrap();
+      const resultAction = await dispatch(login({ email, password })).unwrap();
 
-      if (role === "ADMIN") {
+      // Navegación basada en el rol (usando el rol del resultado de la acción)
+      const userRole = resultAction.role || role; 
+      
+      if (userRole === "ADMIN") {
         navigate("/admin/dashboard");
       } else {
         navigate("/");
@@ -26,24 +29,12 @@ export default function Login() {
   };
 
   return (
-    <div className="relative flex h-screen w-full flex-col items-center justify-center overflow-hidden font-display bg-[#121212]">
-      {/* --- CAPA DE FONDO CON IMAGEN (ESTO TAMBIÉN FALTABA) --- */}
-      {/* <div className="absolute inset-0 z-0">
-        <div
-          className="w-full h-full bg-center bg-no-repeat bg-cover"
-          style={{
-            backgroundImage:
-              'url("https://images.unsplash.com/photo-1555864408-5626a424266c?q=80&w=1932&auto=format&fit=crop")',
-            filter: "blur(4px) brightness(0.6)",
-          }}
-        ></div>
-      </div> */}
-
-      {/* --- EL FORMULARIO (ESTO ES LO QUE YA TENÍAS BIEN) --- */}
+    <div className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden font-display bg-[#121212] p-4 sm:p-6">
       <form
         onSubmit={handleLogin}
-        className="relative z-10 flex w-full max-w-md flex-col items-center rounded-xl bg-[#222222] p-8 backdrop-blur-sm text-white"
+        className="relative z-10 flex w-full max-w-md flex-col items-center rounded-xl bg-[#222222] p-8 backdrop-blur-sm text-white shadow-2xl"
       >
+        {/* Encabezado y título */}
         <div className="mb-6">
           <span className="material-symbols-outlined text-5xl text-[#32CD32]">
             check_circle
@@ -56,6 +47,7 @@ export default function Login() {
           Ingresá tus credenciales para acceder a tu cuenta.
         </p>
 
+        {/* Campos del Formulario */}
         <div className="w-full space-y-4">
           <div>
             <label
@@ -65,6 +57,7 @@ export default function Login() {
               Correo Electrónico
             </label>
             <div className="flex w-full items-stretch">
+              {/* Icono (Si usas Material Icons) */}
               <span className="flex items-center justify-center pl-4 rounded-l-lg bg-[#3c4922] text-[#b7cb90]">
                 <span className="material-symbols-outlined">
                   alternate_email
@@ -72,7 +65,7 @@ export default function Login() {
               </span>
               <input
                 id="email-input"
-                className="flex-1 rounded-r-lg text-white bg-[#3c4922] border-none h-14 placeholder:text-[#b7cb90] p-3 focus:ring-2 focus:ring-[#32CD32]"
+                className="flex-1 rounded-r-lg text-white bg-[#3c4922] border-none h-12 placeholder:text-[#b7cb90] p-3 focus:ring-2 focus:ring-[#32CD32]"
                 placeholder="tu@email.com"
                 type="email"
                 value={email}
@@ -89,12 +82,13 @@ export default function Login() {
               Contraseña
             </label>
             <div className="flex w-full items-stretch">
+              {/* Icono */}
               <span className="flex items-center justify-center pl-4 rounded-l-lg bg-[#3c4922] text-[#b7cb90]">
                 <span className="material-symbols-outlined">lock</span>
               </span>
               <input
                 id="password-input"
-                className="flex-1 rounded-r-lg text-white bg-[#3c4922] border-none h-14 placeholder:text-[#b7cb90] p-3 focus:ring-2 focus:ring-[#32CD32]"
+                className="flex-1 rounded-r-lg text-white bg-[#3c4922] border-none h-12 placeholder:text-[#b7cb90] p-3 focus:ring-2 focus:ring-[#32CD32]"
                 placeholder="Contraseña"
                 type="password"
                 value={password}
@@ -105,6 +99,7 @@ export default function Login() {
           </div>
         </div>
 
+        {/* Link a Forgot Password */}
         <div className="w-full text-right mt-2">
           <Link
             to="/forgot-password"
@@ -114,6 +109,7 @@ export default function Login() {
           </Link>
         </div>
 
+        {/* Botón de Submit */}
         <div className="w-full pt-6">
           <button
             type="submit"
@@ -126,6 +122,7 @@ export default function Login() {
           </button>
         </div>
 
+        {/* Link a Registro */}
         <div className="w-full text-center mt-6">
           <p className="text-sm text-gray-400">
             ¿No tienes una cuenta?{" "}

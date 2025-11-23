@@ -6,126 +6,128 @@ import { fetchCategories } from "../../redux/categorySlice";
 import { fetchWishlist } from "../../redux/wishlistSlice";
 
 export default function Home() {
-  const dispatch = useDispatch();
-  const games = useSelector((state) => state.games.userGameList);
-  const categories = useSelector((state) => state.categories.categoryList);
-  const { userId, role } = useSelector((state) => state.auth);
+    const dispatch = useDispatch();
+    const games = useSelector((state) => state.games.userGameList);
+    const categories = useSelector((state) => state.categories.categoryList);
+    const { userId, role } = useSelector((state) => state.auth);
 
-  // Estados para los filtros
-  const [category, setCategory] = useState("");
-  const [minPrice, setMinPrice] = useState(""); // Nuevo: Precio Mínimo
-  const [maxPrice, setMaxPrice] = useState(""); // Nuevo: Precio Máximo
-  const [title, setTitle] = useState("");
+    // Estados para los filtros
+    const [category, setCategory] = useState("");
+    const [minPrice, setMinPrice] = useState("");
+    const [maxPrice, setMaxPrice] = useState("");
+    const [title, setTitle] = useState("");
 
-  // Carga inicial de todos los juegos.
-  useEffect(() => {
-    dispatch(fetchGamesUser());
-    dispatch(fetchCategories());
-    if (userId && role === "USER") {
-      dispatch(fetchWishlist(userId));
-    }
-  }, [dispatch, userId, role]);
+    // Carga inicial de todos los juegos.
+    useEffect(() => {
+        dispatch(fetchGamesUser());
+        dispatch(fetchCategories());
+        if (userId && role === "USER") {
+            dispatch(fetchWishlist(userId));
+        }
+    }, [dispatch, userId, role]);
 
-  // Función de Filtrado y Ordenamiento usando useMemo
-  const filteredGames = useMemo(() => {
-    let currentGames = [...games]; // Usar una copia para el ordenamiento
+    // Función de Filtrado y Ordenamiento usando useMemo
+    const filteredGames = useMemo(() => {
+        let currentGames = [...games];
 
-    // 1. Filtrado por Texto (Búsqueda por nombre)
-    if (title) {
-      currentGames = currentGames.filter((game) =>
-        game.title.toLowerCase().includes(title.toLowerCase())
-      );
-    }
+        // 1. Filtrado por Texto (Búsqueda por nombre)
+        if (title) {
+            currentGames = currentGames.filter((game) =>
+                game.title.toLowerCase().includes(title.toLowerCase())
+            );
+        }
 
-    // 2. Filtrado por Categoría/Género
-    if (category) {
-      currentGames = currentGames.filter(
-        (game) =>
-          // 1. Aseguramos que 'categories' existe y es un array
-          Array.isArray(game.categories) &&
-          // 2. Usamos .some() para verificar si AL MENOS UNA categoría coincide
-          game.categories.some(
-            (gameCategory) =>
-              // Comparamos el nombre de la categoría del juego con el filtro 'genre'
-              gameCategory.name &&
-              gameCategory.name.toUpperCase() === category.toUpperCase()
-          )
-      );
-    }
+        // 2. Filtrado por Categoría/Género
+        if (category) {
+            currentGames = currentGames.filter(
+                (game) =>
+                    Array.isArray(game.categories) &&
+                    game.categories.some(
+                        (gameCategory) =>
+                            gameCategory.name &&
+                            gameCategory.name.toUpperCase() === category.toUpperCase()
+                    )
+            );
+        }
 
-    // 3. Filtrado por Rango de Precio
-    const min = parseFloat(minPrice);
-    const max = parseFloat(maxPrice);
+        // 3. Filtrado por Rango de Precio
+        const min = parseFloat(minPrice);
+        const max = parseFloat(maxPrice);
 
-    if (!isNaN(min) || !isNaN(max)) {
-      currentGames = currentGames.filter((game) => {
-        const price = game.finalPrice || 0;
+        if (!isNaN(min) || !isNaN(max)) {
+            currentGames = currentGames.filter((game) => {
+                const price = game.finalPrice || 0;
 
-        const passesMin = isNaN(min) || price >= min;
-        const passesMax = isNaN(max) || price <= max;
+                const passesMin = isNaN(min) || price >= min;
+                const passesMax = isNaN(max) || price <= max;
 
-        return passesMin && passesMax;
-      });
-    }
+                return passesMin && passesMax;
+            });
+        }
 
-    return currentGames;
-  }, [games, title, category, minPrice, maxPrice]);
+        return currentGames;
+    }, [games, title, category, minPrice, maxPrice]);
 
-  return (
-    <div className="px-[50px] mb-[4rem]">
-      <h2 className="my-[20px] text-[30px]">Catálogo de Juegos</h2>
+    return (
+        // 1. Padding adaptable: px-4 (móvil) a lg:px-[50px] (escritorio)
+        <div className="px-4 sm:px-8 lg:px-[50px] mb-16">
+            <h2 className="my-5 text-3xl font-bold">Catálogo de Juegos</h2>
 
-      {/* Formulario con filtros */}
-      <form style={{ marginBottom: "2rem" }}>
-        <div className="flex gap-[3rem]">
-          <input
-            type="text"
-            placeholder="Buscar juego por nombre..."
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            style={{ flex: 1, minWidth: "200px", maxWidth: "400px" }}
-            className="min-w-[200px] max-w-[400px] border border-[2px] border-[#32CD32] rounded-md p-2 focus:ring-[#32CD32]"
-          />
+            {/* Formulario con filtros */}
+            <form className="mb-8">
+                {/* CONTENEDOR DE FILTROS: Usa flex-wrap para apilar en móvil */}
+                <div className="flex flex-wrap items-center gap-4 sm:gap-6 p-4 border border-gray-700 rounded-lg">
+                    <input
+                        type="text"
+                        placeholder="Buscar juego por nombre..."
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                        // Ocupa el ancho completo en móvil, se vuelve flexible en sm
+                        className="w-full sm:w-auto sm:flex-grow border-2 border-[#32CD32] rounded-md p-2 focus:ring-[#32CD32]"
+                    />
 
-          {/* Select para Género */}
-          {
-            <select
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              className="bg-[#32CD32] p-1"
-            >
-              <option value="">Todos los géneros</option>
-              {categories.map((cat) => (
-                <option value={cat.name}>{cat.name}</option>
-              ))}
-            </select>
-          }
+                    {/* Select para Género */}
+                    <select
+                        value={category}
+                        onChange={(e) => setCategory(e.target.value)}
+                        // Ocupa el ancho completo en móvil
+                        className="w-full sm:w-auto bg-[#32CD32] p-2 text-white rounded-md cursor-pointer"
+                    >
+                        <option value="">Todos los géneros</option>
+                        {categories.map((cat) => (
+                            <option key={cat.name} value={cat.name}>{cat.name}</option> 
+                        ))}
+                    </select>
 
-          {/* 2. Filtro de Rango de Precio */}
-          <input
-            type="number"
-            placeholder="Precio Mín."
-            value={minPrice}
-            onChange={(e) => setMinPrice(e.target.value)}
-            className="w-[120px] border border-[2px] border-[#32CD32] rounded-md p-2 focus:ring-[#32CD32]"
-          />
-          <input
-            type="number"
-            placeholder="Precio Máx."
-            value={maxPrice}
-            onChange={(e) => setMaxPrice(e.target.value)}
-            className="w-[120px] border border-[2px] border-[#32CD32] rounded-md p-2 focus:ring-[#32CD32]"
-          />
+                    {/* Filtro de Rango de Precio (usa calc() para dividir en móvil) */}
+                    <input
+                        type="number"
+                        placeholder="Precio Mín."
+                        value={minPrice}
+                        onChange={(e) => setMinPrice(e.target.value)}
+                        className="w-[calc(50%-10px)] sm:w-[120px] border-2 border-[#32CD32] rounded-md p-2 focus:ring-[#32CD32] flex-shrink-0"
+                    />
+                    <input
+                        type="number"
+                        placeholder="Precio Máx."
+                        value={maxPrice}
+                        onChange={(e) => setMaxPrice(e.target.value)}
+                        className="w-[calc(50%-10px)] sm:w-[120px] border-2 border-[#32CD32] rounded-md p-2 focus:ring-[#32CD32] flex-shrink-0"
+                    />
+                </div>
+            </form>
+
+            {/* CONTENEDOR DE JUEGOS: Implementación de la Grilla Responsive */}
+            {/* grid-cols-2 (Móvil) -> sm:grid-cols-3 (Tablet) -> lg:grid-cols-4 (Desktop) */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                {filteredGames.length > 0 ? (
+                    filteredGames.map((g) => <GameCard key={g.id} game={g} />)
+                ) : (
+                    <p className="col-span-full text-center py-10 text-xl text-gray-400">
+                        No se encontraron juegos que coincidan con tu búsqueda.
+                    </p>
+                )}
+            </div>
         </div>
-      </form>
-
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "3rem" }}>
-        {filteredGames.length > 0 ? (
-          filteredGames.map((g) => <GameCard key={g.id} game={g} />)
-        ) : (
-          <p>No se encontraron juegos que coincidan con tu búsqueda.</p>
-        )}
-      </div>
-    </div>
-  );
+    );
 }

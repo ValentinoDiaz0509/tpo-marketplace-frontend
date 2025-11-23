@@ -7,7 +7,7 @@ export default function ShoppingCart() {
   const dispatch = useDispatch();
   const { items, loading } = useSelector((state) => state.cart);
 
-  // 1. NUEVO ESTADO: Controla si estamos en la vista de lista o en el formulario de pago
+  // 1. ESTADO: Controla la vista de lista o formulario de pago
   const [isCheckout, setIsCheckout] = useState(false);
 
   // 2. ESTADOS LOCALES PARA EL PAGO
@@ -37,7 +37,7 @@ export default function ShoppingCart() {
       return;
     }
 
-    // 4. CONSTRUCCIÓN DEL PAYLOAD Y DESPACHO
+    // CONSTRUCCIÓN DEL PAYLOAD Y DESPACHO
     const itemList = items.map((item) => ({
       gameId: item.id,
       quantity: item.quantity,
@@ -60,9 +60,9 @@ export default function ShoppingCart() {
     );
   }
 
-  // 5. RENDERIZADO CONDICIONAL
+  // RENDERIZADO PRINCIPAL (Optimizado para Mobile-First)
   return (
-    <div className="max-w-4xl mx-auto my-10 p-6 bg-gray-800 rounded-lg shadow-xl text-white">
+    <div className="max-w-4xl mx-auto my-6 sm:my-10 p-4 sm:p-6 bg-gray-800 rounded-lg shadow-xl text-white">
       <h2 className="text-3xl font-bold mb-6">
         {isCheckout ? "Finalizar Compra" : "🛍️ Tu Carrito de Compras"}
       </h2>
@@ -74,16 +74,17 @@ export default function ShoppingCart() {
             {items.map((item) => (
               <div
                 key={item.id}
-                className="flex justify-between items-center border-b border-gray-700 py-2"
+                // Adaptación: Cambiar a flex-col en pantallas muy pequeñas
+                className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-gray-700 py-3"
               >
-                <div className="flex-1">
+                <div className="flex-1 mb-2 sm:mb-0">
                   <p className="font-semibold">{item.title}</p>
                   <p className="text-sm text-gray-400">
                     ${item.price.toFixed(2)} c/u
                   </p>
                 </div>
 
-                <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-3 mt-1 sm:mt-0">
                   <input
                     type="number"
                     min="1"
@@ -109,7 +110,7 @@ export default function ShoppingCart() {
               Total: ${totalAmount.toFixed(2)}
             </h3>
 
-            {/* 6. BOTÓN PARA CAMBIAR A LA VISTA DE PAGO */}
+            {/* BOTÓN PARA CAMBIAR A LA VISTA DE PAGO */}
             <button
               onClick={() => setIsCheckout(true)}
               className="w-full mt-4 py-3 rounded-lg font-bold transition bg-green-500 hover:bg-green-600"
@@ -128,11 +129,11 @@ export default function ShoppingCart() {
             Datos de Pago
           </h3>
 
-          <div className="flex justify-between">
+          <div className="flex flex-col sm:flex-row justify-between">
             <button
               type="button"
               onClick={() => setIsCheckout(false)}
-              className="text-blue-400 hover:text-blue-300 mb-4"
+              className="text-blue-400 hover:text-blue-300 mb-4 sm:mb-0"
             >
               &larr; Volver al Carrito
             </button>
@@ -179,6 +180,7 @@ export default function ShoppingCart() {
             />
           </div>
 
+          {/* CVV y Fecha de Expiración (Responsive) */}
           <div className="flex space-x-4">
             {/* 📅 Fecha de Expiración */}
             <div className="w-1/2">
@@ -191,20 +193,14 @@ export default function ShoppingCart() {
                 value={expiryDate}
                 onChange={(e) => {
                   const cleanedValue = e.target.value.replace(/\D/g, "");
-
                   let formattedValue = cleanedValue;
-
-                  // Añadir "/" después de los primeros dos dígitos (MM)
                   if (cleanedValue.length > 2) {
                     formattedValue = cleanedValue.replace(
                       /^(\d{2})(.*)$/,
                       "$1/$2"
                     );
                   }
-
-                  // Limitar la longitud a MM/AA (5 caracteres)
                   formattedValue = formattedValue.substring(0, 5);
-
                   setExpiryDate(formattedValue);
                 }}
                 className="w-full p-2 bg-gray-700 border border-gray-600 rounded text-white"
